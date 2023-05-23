@@ -19,10 +19,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.budgeting_client.R
-import com.example.budgeting_client.finance.financeContext
-import com.example.budgeting_client.manga.mangaContext
+import com.example.budgeting_client.finance.buildFinanceContext
+import com.example.budgeting_client.manga.buildMangaContext
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,9 +33,9 @@ fun MainContextDrawer() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val onMainMenuOpen = fun() { scope.launch { drawerState.open() }}
-    val financeComponent = financeContext(onMainMenuOpen)
+    val financeComponent = buildFinanceContext(onMainMenuOpen)
     val items = listOf(
-        ContextItem(ImageVector.vectorResource(id = R.drawable.book), "Manga", mangaContext(onMainMenuOpen)),
+        ContextItem(ImageVector.vectorResource(id = R.drawable.book), "Manga", buildMangaContext(onMainMenuOpen)),
         ContextItem(ImageVector.vectorResource(id = R.drawable.health), "Health", financeComponent),
         ContextItem(ImageVector.vectorResource(id = R.drawable.recipes), "Cooking", financeComponent),
         ContextItem(ImageVector.vectorResource(id = R.drawable.restaurant), "Restaurants", financeComponent),
@@ -57,7 +58,7 @@ fun MainContextDrawer() {
                             scope.launch { drawerState.close() }
                             selectedItem.value = item
                         },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                     )
                 }
             }

@@ -12,6 +12,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BudgetingclientTheme {
                 MainContextDrawer()
+                applicationContext
             }
         }
     }
