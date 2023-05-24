@@ -1,5 +1,6 @@
 package com.example.budgeting_client.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,13 +19,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.budgeting_client.R
-import com.example.budgeting_client.finance.buildFinanceContext
-import com.example.budgeting_client.manga.buildMangaContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.example.budgeting_client.finance.FinanceContext
+import com.example.budgeting_client.manga.MangaContext
 import kotlinx.coroutines.launch
+import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,16 +36,21 @@ fun MainContextDrawer() {
     // State
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val onMainMenuOpen = fun() { scope.launch { drawerState.open() }}
-    val financeComponent = buildFinanceContext(onMainMenuOpen)
+    val onMainMenuOpen = fun() {
+        scope.launch { drawerState.open() }
+    }
     val items = listOf(
-        ContextItem(ImageVector.vectorResource(id = R.drawable.book), "Manga", buildMangaContext(onMainMenuOpen)),
-        ContextItem(ImageVector.vectorResource(id = R.drawable.health), "Health", financeComponent),
-        ContextItem(ImageVector.vectorResource(id = R.drawable.recipes), "Cooking", financeComponent),
-        ContextItem(ImageVector.vectorResource(id = R.drawable.restaurant), "Restaurants", financeComponent),
-        ContextItem(ImageVector.vectorResource(id = R.drawable.savings), "Finance", financeComponent),
+        ContextItem.Manga,
+        ContextItem.Health,
+        ContextItem.Cooking,
+        ContextItem.Restaurants,
+        ContextItem.Finance
     )
     val selectedItem = remember { mutableStateOf(items[0]) }
+
+    val navController = rememberNavController()
+
+    Log.d("MAIN_CONTEXT_DRAWER", "WORKING")
 
     // Render
     ModalNavigationDrawer(
@@ -51,11 +60,19 @@ fun MainContextDrawer() {
                 Spacer(Modifier.height(12.dp))
                 items.forEach { item ->
                     NavigationDrawerItem(
-                        icon = { Icon(item.image, contentDescription = item.title) },
-                        label = { Text(item.title) },
+                        icon = { Icon(ImageVector.vectorResource(id = item.image), contentDescription = stringResource(item.title)) },
+                        label = { Text(stringResource(id = item.title)) },
                         selected = item == selectedItem.value,
                         onClick = {
+                            Log.d("MAIN_CONTEXT_DRAWER", "drawer got clicked")
                             scope.launch { drawerState.close() }
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             selectedItem.value = item
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
@@ -63,6 +80,13 @@ fun MainContextDrawer() {
                 }
             }
         },
-        content = selectedItem.value.content
-    )
+    ) {
+        NavHost(navController = navController, startDestination = ContextItem.Manga.route) {
+            composable(ContextItem.Manga.route) { MangaContext(onMainMenuOpen) }
+            composable(ContextItem.Health.route) { FinanceContext(onMainMenuOpen) }
+            composable(ContextItem.Cooking.route) { FinanceContext(onMainMenuOpen) }
+            composable(ContextItem.Restaurants.route) { FinanceContext(onMainMenuOpen) }
+            composable(ContextItem.Finance.route) { FinanceContext(onMainMenuOpen) }
+        }
+    }
 }

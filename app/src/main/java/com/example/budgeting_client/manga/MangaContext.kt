@@ -2,6 +2,7 @@ package com.example.budgeting_client.manga
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,57 +23,56 @@ import androidx.compose.ui.unit.dp
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun buildMangaContext(onDrawerOpen: () -> Unit): @Composable () -> Unit {
-    return {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            "Manga",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+@Composable
+fun MangaContext(onDrawerOpen: () -> Unit) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "Manga",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onDrawerOpen) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Main Menu"
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onDrawerOpen) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Main Menu"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* doSomething() */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Add Manga"
-                            )
-                        }
                     }
-                )
-            },
-            content = { innerPadding ->
-                LazyColumn(
-                    contentPadding = innerPadding,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val list = (0..75).map { it.toString() }
-                    items(count = list.size) {
-                        Box(Modifier.fillMaxWidth().height(160.dp)) {
-                            MangaCard(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.9F)
-                                    .align(Alignment.Center),
-                                title = "Test",
-                                chapter = 10,
-                                lastUpdated = Date(),
-                                urlString = "https://google.com"
-                            )
-                        }
+                },
+                actions = {
+                    IconButton(onClick = { /* doSomething() */ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add Manga"
+                        )
+                    }
+                }
+            )
+        },
+        content = { innerPadding ->
+            LazyColumn(
+                contentPadding = innerPadding,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val list = (0..75).map { it.toString() }
+                items(count = list.size) {
+                    Box(Modifier.fillMaxWidth().height(160.dp)) {
+                        MangaCard(
+                            modifier = Modifier
+                                .fillMaxWidth(0.9F)
+                                .align(Alignment.Center),
+                            title = "Test",
+                            chapter = 10,
+                            lastUpdated = Date(),
+                            urlString = "https://google.com"
+                        )
                     }
                 }
             }
-        )
-    }
+        }
+    )
 }
