@@ -49,7 +49,7 @@ fun MangaCard(
 ) {
     val context = LocalContext.current
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
-    var expanded = remember { mutableStateOf(false) }
+    val expanded = remember { mutableStateOf(false) }
 
     Card(
         onClick = { startActivity(context, browserIntent, null) },

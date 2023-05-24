@@ -2,9 +2,6 @@ package com.example.budgeting_client.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import com.example.budgeting_client.R
 
 sealed class ContextItem (
