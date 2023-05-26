@@ -21,7 +21,8 @@ class MainActivity : ComponentActivity() {
 
 /**
  * TODO
- * Screen for adding new crawlers
+ * Implement API service for creating crawlers
+ * Implement API service for retrieving crawlers
  * Using a NavHost
  * Connect to the server for application functionality:
  * * User-initiated Sync

@@ -2,6 +2,9 @@
     <string name="app_name">budgeting-client</string>
     <string name="manga_title">Manga</string>
     <string name="manga_add_title">Add Manga</string>
+    <string name="manga_title_form">Manga Title</string>
+    <string name="manga_url_form">URL</string>
+    <string name="manga_adapter_form">Adapter</string>
     <string name="health_title">Health</string>
     <string name="cooking_title">Cooking</string>
     <string name="restaurants_title">Restaurants</string>

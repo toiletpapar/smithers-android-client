@@ -1,6 +1,5 @@
 package com.example.budgeting_client.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,12 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import com.example.budgeting_client.finance.FinanceContext
-import com.example.budgeting_client.manga.MangaContext
-import kotlinx.coroutines.launch
 import androidx.navigation.compose.rememberNavController
+import com.example.budgeting_client.finance.FinanceContext
 import com.example.budgeting_client.manga.mangaGraph
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +49,6 @@ fun MainContextDrawer() {
 
     val navController = rememberNavController()
 
-    Log.d("MAIN_CONTEXT_DRAWER", "WORKING")
-
     // Render
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -66,7 +61,6 @@ fun MainContextDrawer() {
                         label = { Text(stringResource(id = item.title)) },
                         selected = item == selectedItem.value,
                         onClick = {
-                            Log.d("MAIN_CONTEXT_DRAWER", "drawer got clicked")
                             scope.launch { drawerState.close() }
                             navController.navigate(item.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
