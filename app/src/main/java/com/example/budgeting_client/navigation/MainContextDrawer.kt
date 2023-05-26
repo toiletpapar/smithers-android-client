@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import com.example.budgeting_client.finance.FinanceContext
 import com.example.budgeting_client.manga.MangaContext
 import kotlinx.coroutines.launch
 import androidx.navigation.compose.rememberNavController
+import com.example.budgeting_client.manga.mangaGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,8 +83,8 @@ fun MainContextDrawer() {
             }
         },
     ) {
-        NavHost(navController = navController, startDestination = ContextItem.Manga.route) {
-            composable(ContextItem.Manga.route) { MangaContext(onMainMenuOpen) }
+        NavHost(navController = navController, startDestination = "manga") {
+            mangaGraph(navController, onMainMenuOpen)
             composable(ContextItem.Health.route) { FinanceContext(onMainMenuOpen) }
             composable(ContextItem.Cooking.route) { FinanceContext(onMainMenuOpen) }
             composable(ContextItem.Restaurants.route) { FinanceContext(onMainMenuOpen) }

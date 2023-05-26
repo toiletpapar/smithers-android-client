@@ -23,7 +23,7 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MangaContext(onDrawerOpen: () -> Unit) {
+fun MangaContext(onDrawerOpen: () -> Unit, onAddClick: () -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -43,7 +43,7 @@ fun MangaContext(onDrawerOpen: () -> Unit) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = onAddClick) {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Add Manga"
