@@ -17,10 +17,16 @@ fun NavGraphBuilder.mangaGraph(navController: NavController, onMainMenuOpen: () 
                 }
             )
         }
+
+        val goToIndex = {
+            navController.navigate(ContextItem.Manga.route)
+        }
+
         composable(ContextItem.MangaAdd.route) {
             MangaAdd(
-                onClose = {
-                    navController.navigate(ContextItem.Manga.route)
+                onClose = goToIndex,
+                onAddComplete = {
+                    goToIndex()
                 }
             )
         }

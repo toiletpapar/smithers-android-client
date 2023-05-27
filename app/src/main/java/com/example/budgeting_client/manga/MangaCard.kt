@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -60,6 +62,7 @@ fun MangaCard(
         ) {
             Column(Modifier.fillMaxWidth(0.2f)) {
                 Surface(Modifier.fillMaxSize()) {
+                    // TODO: Add param for image based on LatestMangaUpdate otherwise use the Crawler.adapter
                     Image(
                         painter = painterResource(id = R.drawable.webtoon),
                         contentDescription = "Manga Cover",
@@ -69,8 +72,10 @@ fun MangaCard(
             Column(Modifier.fillMaxWidth(0.8f).padding(horizontal = 16.dp)) {
                 Text(
                     text = title,
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.titleLarge,
-                    lineHeight = 0.em
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
                 )
                 Text(
                     text = "Chapter $chapter",

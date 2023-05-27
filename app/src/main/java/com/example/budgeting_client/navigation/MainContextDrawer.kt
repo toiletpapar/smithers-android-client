@@ -13,9 +13,11 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -45,7 +47,7 @@ fun MainContextDrawer() {
         ContextItem.Restaurants,
         ContextItem.Finance
     )
-    val selectedItem = remember { mutableStateOf(items[0]) }
+    var selectedItem by remember { mutableStateOf(items[0]) }
 
     val navController = rememberNavController()
 
@@ -59,7 +61,7 @@ fun MainContextDrawer() {
                     NavigationDrawerItem(
                         icon = { Icon(ImageVector.vectorResource(id = item.image), contentDescription = stringResource(item.title)) },
                         label = { Text(stringResource(id = item.title)) },
-                        selected = item == selectedItem.value,
+                        selected = item == selectedItem,
                         onClick = {
                             scope.launch { drawerState.close() }
                             navController.navigate(item.route) {
@@ -69,7 +71,7 @@ fun MainContextDrawer() {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                            selectedItem.value = item
+                            selectedItem = item
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                     )

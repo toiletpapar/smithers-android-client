@@ -38,25 +38,28 @@ import com.example.budgeting_client.navigation.ContextItem
 import kotlinx.coroutines.launch
 
 
-suspend fun onSave(crawler: Crawler) {
-    Log.d("TEST", crawler.toString())
-
+suspend fun onSave(crawler: Crawler, onAddComplete: () -> Unit) {
     try {
         val response = crawlerService.createCrawler(crawler)
 
         if (response.isSuccessful) {
-            // TODO: Navigate back to manga screen, display toast showing success
+            // TODO: Display toast showing success
+            // Composing the parent context refreshes the list
+            onAddComplete()
         } else {
             // TODO: Handle server response with toast "server responded with unknown error (xxx) where xxx is the status code", navigate to manga screen
+            Log.i("BUDGETING_INFO", response.message())
+            onAddComplete()
         }
     } catch (e: Exception) {
         // TODO: Handle any exceptions with toast "unknown error occurred"
+        Log.e("BUDGETING_ERROR", e.message ?: "Unable to getCrawlers")
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MangaAdd(onClose: () -> Unit) {
+fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
     var crawler by rememberSaveable { mutableStateOf(Crawler(name = "", url = "", adapter = CrawlerTypes.WEBTOON)) }
     val scope = rememberCoroutineScope()
 
@@ -79,7 +82,7 @@ fun MangaAdd(onClose: () -> Unit) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { scope.launch { onSave(crawler) } }) {
+                    IconButton(onClick = { scope.launch { onSave(crawler, onAddComplete) } }) {
                         Icon(
                             imageVector = Icons.Filled.Check,
                             contentDescription = null
