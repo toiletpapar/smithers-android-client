@@ -1,4 +1,4 @@
-package com.example.budgeting_client.manga
+package com.example.budgeting_client.ui.manga
 
 import android.content.Intent
 import android.net.Uri
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
@@ -33,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.core.content.ContextCompat.startActivity
 import com.example.budgeting_client.R
 import com.example.budgeting_client.ui.theme.BudgetingclientTheme

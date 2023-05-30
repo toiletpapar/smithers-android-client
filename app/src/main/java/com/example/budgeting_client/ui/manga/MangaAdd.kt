@@ -1,6 +1,5 @@
-package com.example.budgeting_client.manga
+package com.example.budgeting_client.ui.manga
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,10 +14,13 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,40 +32,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.R
-import com.example.budgeting_client.crawler.Crawler
-import com.example.budgeting_client.crawler.CrawlerTypes
-import com.example.budgeting_client.crawler.crawlerService
-import com.example.budgeting_client.navigation.ContextItem
+import com.example.budgeting_client.data.crawler.Crawler
+import com.example.budgeting_client.data.crawler.CrawlerErrors
+import com.example.budgeting_client.data.crawler.CrawlerTypes
+import com.example.budgeting_client.ui.navigation.ContextItem
 import kotlinx.coroutines.launch
-
-
-suspend fun onSave(crawler: Crawler, onAddComplete: () -> Unit) {
-    try {
-        val response = crawlerService.createCrawler(crawler)
-
-        if (response.isSuccessful) {
-            // TODO: Display toast showing success
-            // Composing the parent context refreshes the list
-            onAddComplete()
-        } else {
-            // TODO: Handle server response with toast "server responded with unknown error (xxx) where xxx is the status code", navigate to manga screen
-            Log.i("BUDGETING_INFO", response.message())
-            onAddComplete()
-        }
-    } catch (e: Exception) {
-        // TODO: Handle any exceptions with toast "unknown error occurred"
-        Log.e("BUDGETING_ERROR", e.message ?: "Unable to getCrawlers")
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
+fun MangaAdd(
+    onClose: () -> Unit,
+    onSaveComplete: () -> Unit,
+    mangaAddViewModel: MangaAddViewModel = viewModel(factory = MangaAddViewModel.Factory)
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
     var crawler by rememberSaveable { mutableStateOf(Crawler(name = "", url = "", adapter = CrawlerTypes.WEBTOON)) }
     val scope = rememberCoroutineScope()
 
+    val errors = mangaAddViewModel.uiState.errors
+    val isSaving = mangaAddViewModel.uiState.isSaving
+
+    LaunchedEffect(mangaAddViewModel.uiState.hasUnknownError) {
+        if (mangaAddViewModel.uiState.hasUnknownError) {
+            snackbarHostState.showSnackbar(CrawlerErrors.UNKNOWN_ERROR.message)
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -82,7 +80,10 @@ fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { scope.launch { onSave(crawler, onAddComplete) } }) {
+                    IconButton(
+                        onClick = { scope.launch { mangaAddViewModel.saveCrawler(crawler) } },
+                        enabled = !isSaving // TODO: Queue requests with offline first
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Check,
                             contentDescription = null
@@ -93,7 +94,9 @@ fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxWidth(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -104,7 +107,9 @@ fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
                 onValueChange = { crawler = crawler.copy(name = it) },
                 label = { Text(stringResource(id = R.string.manga_title_form)) },
                 singleLine = true,
-                modifier = modifier
+                modifier = modifier,
+                isError = errors?.hasOneOfError(listOf(CrawlerErrors.DUPLICATE_NAME_KEY, CrawlerErrors.EMPTY_NAME)) ?: false,
+                supportingText = errors?.createErrorComposable(listOf(CrawlerErrors.DUPLICATE_NAME_KEY, CrawlerErrors.EMPTY_NAME))
             )
 
             TextField(
@@ -112,7 +117,9 @@ fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
                 onValueChange = { crawler = crawler.copy(url = it) },
                 label = { Text(stringResource(id = R.string.manga_url_form)) },
                 singleLine = true,
-                modifier = modifier
+                modifier = modifier,
+                isError = errors?.hasOneOfError(listOf(CrawlerErrors.EMPTY_URL, CrawlerErrors.INVALID_URL)) ?: false,
+                supportingText = errors?.createErrorComposable(listOf(CrawlerErrors.EMPTY_URL, CrawlerErrors.INVALID_URL))
             )
 
             var expanded by remember { mutableStateOf(false) }
@@ -123,7 +130,9 @@ fun MangaAdd(onClose: () -> Unit, onAddComplete: () -> Unit) {
             ) {
                 TextField(
                     // The `menuAnchor` modifier must be passed to the text field for correctness.
-                    modifier = Modifier.menuAnchor().then(modifier),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .then(modifier),
                     readOnly = true,
                     value = crawler.adapter.displayName,
                     onValueChange = {},
