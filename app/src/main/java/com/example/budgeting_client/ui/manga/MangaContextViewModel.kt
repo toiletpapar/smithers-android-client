@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.budgeting_client.SmithersApplication
-import com.example.budgeting_client.models.manga.Manga
-import com.example.budgeting_client.models.crawler.CrawlerErrors
+import com.example.budgeting_client.models.Manga
+import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.repositories.MangaRepository
 import com.example.budgeting_client.utils.AppErrors
 import kotlinx.coroutines.Job

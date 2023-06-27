@@ -1,10 +1,10 @@
 package com.example.budgeting_client.repositories
 
 import android.util.Log
-import com.example.budgeting_client.models.crawler.CrawlerErrors
-import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
-import com.example.budgeting_client.models.manga.Manga
-import com.example.budgeting_client.result.AppResult
+import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.CreateCrawlerPayload
+import com.example.budgeting_client.models.Manga
+import com.example.budgeting_client.models.AppResult
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.gson
 

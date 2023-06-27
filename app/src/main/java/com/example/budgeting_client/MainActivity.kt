@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.budgeting_client.repositories.MangaNetworkDataSource
 import com.example.budgeting_client.repositories.MangaRepository
-import com.example.budgeting_client.network.retrofit
+import com.example.budgeting_client.utils.retrofit
 import com.example.budgeting_client.ui.navigation.MainContextDrawer
 import com.example.budgeting_client.ui.theme.BudgetingclientTheme
 

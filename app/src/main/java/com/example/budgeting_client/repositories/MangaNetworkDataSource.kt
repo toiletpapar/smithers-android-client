@@ -1,8 +1,8 @@
 package com.example.budgeting_client.repositories
 
-import com.example.budgeting_client.models.crawler.CrawlerErrors
-import com.example.budgeting_client.models.crawler.CrawlerTypes
-import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
+import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.CrawlerTypes
+import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.getNullable
 import com.example.budgeting_client.utils.gson

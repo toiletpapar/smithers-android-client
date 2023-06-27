@@ -1,6 +1,6 @@
 package com.example.budgeting_client.utils
 
-import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
+import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.repositories.CrawlerApiModel
 import com.example.budgeting_client.repositories.CrawlerApiModelDeserializer
 import com.example.budgeting_client.repositories.CreateCrawlerPayloadSerializer

@@ -1,7 +1,6 @@
-package com.example.budgeting_client.models.manga
+package com.example.budgeting_client.models
 
 import android.os.Parcelable
-import com.example.budgeting_client.models.crawler.CrawlerTypes
 import com.example.budgeting_client.repositories.MangaApiModel
 import com.example.budgeting_client.repositories.MangaUpdateApiModel
 import kotlinx.parcelize.Parcelize
@@ -27,5 +26,24 @@ data class Manga(
         updates = mangaApiModel.mangaUpdates.map<MangaUpdateApiModel, MangaUpdate> {
             MangaUpdate(it)
         }
+    )
+}
+
+@Parcelize
+data class MangaUpdate(
+    val latestMangaUpdateId: Int,
+    val crawledOn: Date,
+    val chapter: Int,
+    val chapterName: String? = null,
+    val isRead: Boolean,
+    val readAt: String
+) : Parcelable {
+    constructor(mangaUpdate: MangaUpdateApiModel) : this(
+        latestMangaUpdateId = mangaUpdate.latestMangaUpdateId,
+        crawledOn = mangaUpdate.crawledOn,
+        chapter = mangaUpdate.chapter,
+        chapterName = mangaUpdate.chapterName,
+        isRead = mangaUpdate.isRead,
+        readAt = mangaUpdate.readAt
     )
 }

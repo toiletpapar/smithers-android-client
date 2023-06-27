@@ -1,4 +1,4 @@
-package com.example.budgeting_client.result
+package com.example.budgeting_client.models
 
 import com.example.budgeting_client.utils.AppErrors
 

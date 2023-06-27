@@ -34,9 +34,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.R
-import com.example.budgeting_client.models.crawler.CrawlerErrors
-import com.example.budgeting_client.models.crawler.CrawlerTypes
-import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
+import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.CrawlerTypes
+import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.ui.navigation.ContextItem
 import kotlinx.coroutines.launch
 

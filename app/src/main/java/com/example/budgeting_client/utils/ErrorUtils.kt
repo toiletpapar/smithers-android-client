@@ -2,7 +2,7 @@ package com.example.budgeting_client.utils
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.example.budgeting_client.result.AppError
+import com.example.budgeting_client.models.AppError
 
 class AppErrors(private val errors: List<AppError>?) {
     fun createErrorComposable(hasErrors: List<AppError>): (@Composable () -> Unit)? {

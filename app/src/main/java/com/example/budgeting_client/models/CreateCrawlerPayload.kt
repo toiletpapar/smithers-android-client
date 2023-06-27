@@ -1,7 +1,6 @@
-package com.example.budgeting_client.models.crawler
+package com.example.budgeting_client.models
 
 import android.os.Parcelable
-import com.example.budgeting_client.result.AppError
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

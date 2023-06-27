@@ -1,4 +1,4 @@
-package com.example.budgeting_client.network
+package com.example.budgeting_client.utils
 
 import com.example.budgeting_client.utils.gson
 import retrofit2.Retrofit

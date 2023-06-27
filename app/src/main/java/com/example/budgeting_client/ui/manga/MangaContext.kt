@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.budgeting_client.models.crawler.CrawlerErrors
+import com.example.budgeting_client.models.CrawlerErrors
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
