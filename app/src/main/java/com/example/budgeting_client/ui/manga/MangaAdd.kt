@@ -34,9 +34,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.R
-import com.example.budgeting_client.data.crawler.Crawler
-import com.example.budgeting_client.data.crawler.CrawlerErrors
-import com.example.budgeting_client.data.crawler.CrawlerTypes
+import com.example.budgeting_client.models.crawler.CrawlerErrors
+import com.example.budgeting_client.models.crawler.CrawlerTypes
+import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
 import com.example.budgeting_client.ui.navigation.ContextItem
 import kotlinx.coroutines.launch
 
@@ -48,7 +48,7 @@ fun MangaAdd(
     mangaAddViewModel: MangaAddViewModel = viewModel(factory = MangaAddViewModel.Factory)
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    var crawler by rememberSaveable { mutableStateOf(Crawler(name = "", url = "", adapter = CrawlerTypes.WEBTOON)) }
+    var crawler by rememberSaveable { mutableStateOf(CreateCrawlerPayload(name = "", url = "", adapter = CrawlerTypes.WEBTOON)) }
     val scope = rememberCoroutineScope()
 
     val errors = mangaAddViewModel.uiState.errors
@@ -57,6 +57,12 @@ fun MangaAdd(
     LaunchedEffect(mangaAddViewModel.uiState.hasUnknownError) {
         if (mangaAddViewModel.uiState.hasUnknownError) {
             snackbarHostState.showSnackbar(CrawlerErrors.UNKNOWN_ERROR.message)
+        }
+    }
+
+    LaunchedEffect(mangaAddViewModel.uiState.isSaveComplete) {
+        if (mangaAddViewModel.uiState.isSaveComplete) {
+            onSaveComplete()
         }
     }
 

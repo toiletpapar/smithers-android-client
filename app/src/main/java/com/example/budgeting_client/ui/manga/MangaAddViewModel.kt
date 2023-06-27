@@ -10,14 +10,15 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.budgeting_client.SmithersApplication
-import com.example.budgeting_client.data.crawler.Crawler
-import com.example.budgeting_client.data.crawler.CrawlerErrors
-import com.example.budgeting_client.data.crawler.MangaRepository
+import com.example.budgeting_client.models.crawler.CrawlerErrors
+import com.example.budgeting_client.models.crawler.CreateCrawlerPayload
+import com.example.budgeting_client.repositories.MangaRepository
 import com.example.budgeting_client.utils.AppErrors
 import kotlinx.coroutines.launch
 
 // initial state
 data class MangaAddUiState (
+    val isSaveComplete: Boolean = false,
     val isSaving: Boolean = false,
     val hasUnknownError: Boolean = false,
     val errors: AppErrors? = null
@@ -30,7 +31,7 @@ class MangaAddViewModel constructor(
     var uiState by mutableStateOf(MangaAddUiState())
         private set
 
-    fun saveCrawler(crawler: Crawler) {
+    fun saveCrawler(crawler: CreateCrawlerPayload) {
         uiState = uiState.copy(
             isSaving = true,
         )
@@ -49,7 +50,8 @@ class MangaAddViewModel constructor(
                     uiState.copy(
                         errors = null,
                         hasUnknownError = false,
-                        isSaving = false
+                        isSaving = false,
+                        isSaveComplete = true
                     )
                 }
             } catch (e: Exception) {

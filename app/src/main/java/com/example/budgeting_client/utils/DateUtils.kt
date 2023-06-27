@@ -1,5 +1,6 @@
 package com.example.budgeting_client.utils
 
+import android.util.Log
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -11,6 +12,7 @@ fun parseDate(dateString: String): Date? {
     return try {
         format.parse(dateString)
     } catch (e: ParseException) {
+        Log.e("MY ERROR", e.message ?: "COULD NOT PARSE DATE")
         null
     }
 }

@@ -10,16 +10,16 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.budgeting_client.SmithersApplication
-import com.example.budgeting_client.data.crawler.Crawler
-import com.example.budgeting_client.data.crawler.CrawlerErrors
-import com.example.budgeting_client.data.crawler.MangaRepository
+import com.example.budgeting_client.models.manga.Manga
+import com.example.budgeting_client.models.crawler.CrawlerErrors
+import com.example.budgeting_client.repositories.MangaRepository
 import com.example.budgeting_client.utils.AppErrors
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 // initial state
 data class MangaContextUiState (
-    val crawlers: List<Crawler> = emptyList(),
+    val mangas: List<Manga> = emptyList(),
     val hasUnknownError: Boolean = false,
     val errors: AppErrors? = null
 )
@@ -40,7 +40,7 @@ class MangaContextViewModel constructor(
 
                 uiState = if (response.isSuccessful) {
                     uiState.copy(
-                        crawlers = response.value ?: emptyList(),
+                        mangas = response.value ?: emptyList(),
                         hasUnknownError = false,
                         errors = null
                     )

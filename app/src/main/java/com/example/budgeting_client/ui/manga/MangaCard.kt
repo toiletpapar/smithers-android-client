@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
@@ -27,14 +29,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.example.budgeting_client.R
-import com.example.budgeting_client.ui.theme.BudgetingclientTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -42,10 +44,12 @@ import java.util.Date
 @Composable
 fun MangaCard(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String, // The name of the crawler
     chapter: Short,
-    lastUpdated: Date,
-    urlString: String,
+    lastUpdated: Date,  // The date this chapter was catalogued
+    lastRemoteSync: Date?, // The latest date the crawler successfully retrieved data from remote
+    urlString: String, // The remote source
+    isRead: Boolean
 ) {
     val context = LocalContext.current
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
@@ -62,9 +66,19 @@ fun MangaCard(
                 Surface(Modifier.fillMaxSize()) {
                     // TODO: Add param for image based on LatestMangaUpdate otherwise use the Crawler.adapter
                     Image(
+                        modifier = Modifier.fillMaxSize(),
                         painter = painterResource(id = R.drawable.webtoon),
                         contentDescription = "Manga Cover",
                     )
+                    Row {
+                        if (isRead) {
+                            Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+                        }
+                        if (lastRemoteSync != null && (System.currentTimeMillis() - lastRemoteSync.time) > (1000 * 60 * 60 * 24 * 3)) {
+                            // Last remote sync was more than 3 days ago
+                            Icon(ImageVector.vectorResource(id = R.drawable.exclamation), contentDescription = null, modifier = Modifier.size(16.dp))
+                        }
+                    }
                 }
             }
             Column(Modifier.fillMaxWidth(0.8f).padding(horizontal = 16.dp)) {
@@ -115,18 +129,5 @@ fun MangaCard(
                 }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun Test() {
-    BudgetingclientTheme {
-        MangaCard(
-            title = "Test",
-            chapter = 10,
-            lastUpdated = Date(),
-            urlString = "https://google.com"
-        )
     }
 }

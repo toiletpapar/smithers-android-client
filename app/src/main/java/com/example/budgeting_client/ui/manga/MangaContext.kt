@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.budgeting_client.data.crawler.CrawlerErrors
+import com.example.budgeting_client.models.crawler.CrawlerErrors
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +35,7 @@ fun MangaContext(
     mangaContextViewModel: MangaContextViewModel = viewModel(factory = MangaContextViewModel.Factory),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val mangas = mangaContextViewModel.uiState.crawlers
+    val mangas = mangaContextViewModel.uiState.mangas
 
     LaunchedEffect(Unit) {
         mangaContextViewModel.getMangas()
@@ -82,7 +82,7 @@ fun MangaContext(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
-                    key = { index -> mangas[index].crawlTargetId ?: index },
+                    key = { index -> mangas[index].crawlTargetId },
                     count = mangas.size
                 ) {
                     val manga = mangas[it]
@@ -93,9 +93,11 @@ fun MangaContext(
                                 .fillMaxWidth(0.9F)
                                 .align(Alignment.Center),
                             title = manga.name,
-                            chapter = 10,   // TODO: Use LatestMangaUpdate to get latest chapter
-                            lastUpdated = Date(),   // TODO: Use LatestMangaUpdate to get the date of the latest chapter
-                            urlString = manga.url
+                            chapter = 10,   // TODO: update.chapter
+                            lastUpdated = Date(),   // TODO: update.crawledOn
+                            urlString = "https://example.com", // TODO: update.readAt
+                            isRead = true,  // TODO: update.isRead
+                            lastRemoteSync = manga.lastCrawledOn
                         )
                     }
                 }
