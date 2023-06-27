@@ -33,7 +33,7 @@ data class Manga(
 data class MangaUpdate(
     val latestMangaUpdateId: Int,
     val crawledOn: Date,
-    val chapter: Int,
+    val chapter: Short,
     val chapterName: String? = null,
     val isRead: Boolean,
     val readAt: String

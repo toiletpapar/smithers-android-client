@@ -45,8 +45,8 @@ import java.util.Date
 fun MangaCard(
     modifier: Modifier = Modifier,
     title: String, // The name of the crawler
-    chapter: Short,
-    lastUpdated: Date,  // The date this chapter was catalogued
+    chapter: Short?,
+    lastUpdated: Date?,  // The date this chapter was catalogued
     lastRemoteSync: Date?, // The latest date the crawler successfully retrieved data from remote
     urlString: String, // The remote source
     isRead: Boolean
@@ -89,14 +89,25 @@ fun MangaCard(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
-                Text(
-                    text = "Chapter $chapter",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    text = SimpleDateFormat.getDateTimeInstance().format(lastUpdated),
-                    style = MaterialTheme.typography.bodySmall,
-                )
+
+                if (chapter != null) {
+                    Text(
+                        text = "Chapter $chapter",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    Text(
+                        text = "No chapters recorded",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                if (lastUpdated != null) {
+                    Text(
+                        text = SimpleDateFormat.getDateTimeInstance().format(lastUpdated),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
             Column(modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.TopEnd)) {
                 IconButton(onClick = { expanded.value = true }) {

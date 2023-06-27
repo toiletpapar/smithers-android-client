@@ -34,7 +34,7 @@ data class CrawlerApiModel(
 data class MangaUpdateApiModel(
     val latestMangaUpdateId: Int,
     val crawledOn: Date,
-    val chapter: Int,
+    val chapter: Short,
     val chapterName: String? = null,
     val isRead: Boolean,
     val readAt: String
@@ -115,7 +115,7 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
         val latestMangaUpdateId = jsonObject.getNullable("latestMangaUpdateId")?.asInt ?: return null
         val crawledOnString = jsonObject.getNullable("crawledOn")?.asString ?: return null
         val crawledOn = parseDate(crawledOnString) ?: return null
-        val chapter = jsonObject.getNullable("chapter")?.asInt ?: return null
+        val chapter = jsonObject.getNullable("chapter")?.asShort ?: return null
         val chapterName = jsonObject.getNullable("chapterName")?.asString
         val isRead = jsonObject.getNullable("isRead")?.asBoolean ?: return null
         val readAt = jsonObject.getNullable("readAt")?.asString ?: return null

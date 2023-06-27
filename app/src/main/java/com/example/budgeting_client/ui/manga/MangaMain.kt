@@ -88,15 +88,17 @@ fun MangaMain(
                     val manga = mangas[it]
 
                     Box(Modifier.fillMaxWidth().height(160.dp)) {
+                        val latestUpdate = manga.updates.getOrNull(0)
+
                         MangaCard(
                             modifier = Modifier
                                 .fillMaxWidth(0.9F)
                                 .align(Alignment.Center),
                             title = manga.name,
-                            chapter = 10,   // TODO: update.chapter
-                            lastUpdated = Date(),   // TODO: update.crawledOn
-                            urlString = "https://example.com", // TODO: update.readAt
-                            isRead = true,  // TODO: update.isRead
+                            chapter = latestUpdate?.chapter,
+                            lastUpdated = latestUpdate?.crawledOn,
+                            urlString = latestUpdate?.readAt ?: manga.url, // Direct to chapter or where it is crawled (usually the manga index page)
+                            isRead = latestUpdate?.isRead ?: false,
                             lastRemoteSync = manga.lastCrawledOn
                         )
                     }
