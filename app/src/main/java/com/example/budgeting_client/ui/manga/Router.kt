@@ -4,28 +4,28 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.budgeting_client.ui.navigation.ContextItem
+import com.example.budgeting_client.ui.navigation.MainItem
 
 fun NavGraphBuilder.mangaGraph(
     navController: NavController,
     onMainMenuOpen: () -> Unit,
 ) {
 
-    navigation(startDestination = ContextItem.Manga.route, route = "manga") {
-        composable(ContextItem.Manga.route) {
-            MangaContext(
+    navigation(startDestination = MainItem.Manga.route, route = "manga") {
+        composable(MainItem.Manga.route) {
+            MangaMain(
                 onDrawerOpen = onMainMenuOpen,
                 onAddClick = {
-                    navController.navigate(ContextItem.MangaAdd.route)
+                    navController.navigate(MainItem.MangaAdd.route)
                 }
             )
         }
 
         val goToIndex = {
-            navController.navigate(ContextItem.Manga.route)
+            navController.navigate(MainItem.Manga.route)
         }
 
-        composable(ContextItem.MangaAdd.route) {
+        composable(MainItem.MangaAdd.route) {
             MangaAdd(
                 onClose = goToIndex,
                 onSaveComplete = goToIndex

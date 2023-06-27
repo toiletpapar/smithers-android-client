@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FinanceContext(onDrawerOpen: () -> Unit) {
+fun FinanceMain(onDrawerOpen: () -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(

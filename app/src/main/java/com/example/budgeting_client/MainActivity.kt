@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import com.example.budgeting_client.repositories.MangaNetworkDataSource
 import com.example.budgeting_client.repositories.MangaRepository
 import com.example.budgeting_client.utils.retrofit
-import com.example.budgeting_client.ui.navigation.MainContextDrawer
+import com.example.budgeting_client.ui.navigation.MainDrawer
 import com.example.budgeting_client.ui.theme.BudgetingclientTheme
 
 
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BudgetingclientTheme {
-                MainContextDrawer()
+                MainDrawer()
             }
         }
     }

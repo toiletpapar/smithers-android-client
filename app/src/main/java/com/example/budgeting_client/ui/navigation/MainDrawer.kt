@@ -27,13 +27,13 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.budgeting_client.ui.finance.FinanceContext
+import com.example.budgeting_client.ui.finance.FinanceMain
 import com.example.budgeting_client.ui.manga.mangaGraph
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainContextDrawer() {
+fun MainDrawer() {
     // State
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -41,11 +41,11 @@ fun MainContextDrawer() {
         scope.launch { drawerState.open() }
     }
     val items = listOf(
-        ContextItem.Manga,
-        ContextItem.Health,
-        ContextItem.Cooking,
-        ContextItem.Restaurants,
-        ContextItem.Finance
+        MainItem.Manga,
+        MainItem.Health,
+        MainItem.Cooking,
+        MainItem.Restaurants,
+        MainItem.Finance
     )
     var selectedItem by remember { mutableStateOf(items[0]) }
 
@@ -84,10 +84,10 @@ fun MainContextDrawer() {
                 navController = navController,
                 onMainMenuOpen = onMainMenuOpen,
             )
-            composable(ContextItem.Health.route) { FinanceContext(onMainMenuOpen) }
-            composable(ContextItem.Cooking.route) { FinanceContext(onMainMenuOpen) }
-            composable(ContextItem.Restaurants.route) { FinanceContext(onMainMenuOpen) }
-            composable(ContextItem.Finance.route) { FinanceContext(onMainMenuOpen) }
+            composable(MainItem.Health.route) { FinanceMain(onMainMenuOpen) }
+            composable(MainItem.Cooking.route) { FinanceMain(onMainMenuOpen) }
+            composable(MainItem.Restaurants.route) { FinanceMain(onMainMenuOpen) }
+            composable(MainItem.Finance.route) { FinanceMain(onMainMenuOpen) }
         }
     }
 }

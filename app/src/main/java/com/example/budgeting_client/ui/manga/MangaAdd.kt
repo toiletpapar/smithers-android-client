@@ -37,7 +37,7 @@ import com.example.budgeting_client.R
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
-import com.example.budgeting_client.ui.navigation.ContextItem
+import com.example.budgeting_client.ui.navigation.MainItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +72,7 @@ fun MangaAdd(
             TopAppBar(
                 title = {
                     Text(
-                        stringResource(id = ContextItem.MangaAdd.title),
+                        stringResource(id = MainItem.MangaAdd.title),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

@@ -29,20 +29,20 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MangaContext(
+fun MangaMain(
     onDrawerOpen: () -> Unit,
     onAddClick: () -> Unit,
-    mangaContextViewModel: MangaContextViewModel = viewModel(factory = MangaContextViewModel.Factory),
+    mangaMainViewModel: MangaMainViewModel = viewModel(factory = MangaMainViewModel.Factory),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val mangas = mangaContextViewModel.uiState.mangas
+    val mangas = mangaMainViewModel.uiState.mangas
 
     LaunchedEffect(Unit) {
-        mangaContextViewModel.getMangas()
+        mangaMainViewModel.getMangas()
     }
 
-    LaunchedEffect(mangaContextViewModel.uiState.hasUnknownError) {
-        if (mangaContextViewModel.uiState.hasUnknownError) {
+    LaunchedEffect(mangaMainViewModel.uiState.hasUnknownError) {
+        if (mangaMainViewModel.uiState.hasUnknownError) {
             snackbarHostState.showSnackbar(CrawlerErrors.UNKNOWN_ERROR.message)
         }
     }

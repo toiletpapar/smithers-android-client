@@ -18,17 +18,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 // initial state
-data class MangaContextUiState (
+data class MangaMainUiState (
     val mangas: List<Manga> = emptyList(),
     val hasUnknownError: Boolean = false,
     val errors: AppErrors? = null
 )
 
 // reduce
-class MangaContextViewModel constructor(
+class MangaMainViewModel constructor(
     private val mangaRepository: MangaRepository
 ) : ViewModel() {
-    var uiState by mutableStateOf(MangaContextUiState())
+    var uiState by mutableStateOf(MangaMainUiState())
         private set
 
     private var fetchJob: Job? = null
@@ -72,7 +72,7 @@ class MangaContextViewModel constructor(
                 // Get the Application object from extras
                 val application = checkNotNull(extras[APPLICATION_KEY])
 
-                return MangaContextViewModel(
+                return MangaMainViewModel(
                     (application as SmithersApplication).mangaRepository
                 ) as T
             }
