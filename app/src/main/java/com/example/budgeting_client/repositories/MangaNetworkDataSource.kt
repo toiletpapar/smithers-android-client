@@ -10,7 +10,6 @@ import com.example.budgeting_client.utils.parseDate
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
@@ -32,7 +31,7 @@ data class CrawlerApiModel(
 )
 
 data class MangaUpdateApiModel(
-    val latestMangaUpdateId: Int,
+    val mangaUpdateId: Int,
     val crawledOn: Date,
     val chapter: Short,
     val chapterName: String? = null,
@@ -112,7 +111,7 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
     ): MangaUpdateApiModel? {
         val jsonObject = json?.asJsonObject ?: return null
 
-        val latestMangaUpdateId = jsonObject.getNullable("latestMangaUpdateId")?.asInt ?: return null
+        val mangaUpdateId = jsonObject.getNullable("mangaUpdateId")?.asInt ?: return null
         val crawledOnString = jsonObject.getNullable("crawledOn")?.asString ?: return null
         val crawledOn = parseDate(crawledOnString) ?: return null
         val chapter = jsonObject.getNullable("chapter")?.asShort ?: return null
@@ -121,7 +120,7 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
         val readAt = jsonObject.getNullable("readAt")?.asString ?: return null
 
         return MangaUpdateApiModel(
-            latestMangaUpdateId,
+            mangaUpdateId,
             crawledOn,
             chapter,
             chapterName,
@@ -131,12 +130,12 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
     }
 }
 
-class MangaApiErrorModelDeserializer : JsonDeserializer<AppErrors> {
+class MangaApiErrorModelDeserializer : JsonDeserializer<AppErrors<CrawlerErrors>> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
         context: JsonDeserializationContext?
-    ): AppErrors? {
+    ): AppErrors<CrawlerErrors>? {
         val jsonObject = json?.asJsonObject ?: return null
 
         val appErrors =  AppErrors(jsonObject.getAsJsonArray("errors").map {
@@ -179,8 +178,6 @@ class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload> {
         crawlerJson.addProperty("name", crawler.name)
         crawlerJson.addProperty("url", crawler.url)
         crawlerJson.addProperty("adapter", crawler.adapter.value)
-        crawlerJson.add("lastCrawledOn", JsonNull.INSTANCE)
-        crawlerJson.add("crawlSuccess", JsonNull.INSTANCE)
 
         return crawlerJson
     }
@@ -188,10 +185,10 @@ class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload> {
 
 // Defines how to access crawler data in the data source
 interface MangaNetworkDataSource {
-    @GET("v1/manga")
+    @GET("api/v1/manga")
     suspend fun getManga(@Query("onlyLatest") onlyLatest: Boolean? = true): Response<List<MangaApiModel>>
 
-    @POST("v1/crawl-targets")
+    @POST("api/v1/crawl-targets")
     suspend fun saveCrawler(@Body crawler: CreateCrawlerPayload): Response<CrawlerApiModel>
 }
 

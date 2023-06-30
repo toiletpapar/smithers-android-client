@@ -31,7 +31,7 @@ data class Manga(
 
 @Parcelize
 data class MangaUpdate(
-    val latestMangaUpdateId: Int,
+    val mangaUpdateId: Int,
     val crawledOn: Date,
     val chapter: Short,
     val chapterName: String? = null,
@@ -39,7 +39,7 @@ data class MangaUpdate(
     val readAt: String
 ) : Parcelable {
     constructor(mangaUpdate: MangaUpdateApiModel) : this(
-        latestMangaUpdateId = mangaUpdate.latestMangaUpdateId,
+        mangaUpdateId = mangaUpdate.mangaUpdateId,
         crawledOn = mangaUpdate.crawledOn,
         chapter = mangaUpdate.chapter,
         chapterName = mangaUpdate.chapterName,

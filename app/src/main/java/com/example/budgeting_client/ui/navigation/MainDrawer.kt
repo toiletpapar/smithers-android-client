@@ -3,6 +3,7 @@ package com.example.budgeting_client.ui.navigation
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,6 +14,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,17 +25,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.budgeting_client.ui.finance.FinanceMain
 import com.example.budgeting_client.ui.manga.mangaGraph
+import com.example.budgeting_client.ui.user.UserLogin
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainDrawer() {
+fun MainDrawer(
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory),
+) {
     // State
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -51,12 +57,24 @@ fun MainDrawer() {
 
     val navController = rememberNavController()
 
+    val user = userViewModel.uiState.user
+
+    LaunchedEffect(user) {
+        if (user !== null) {
+            navController.navigate(MainItem.Manga.route)
+        }
+    }
+
     // Render
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Spacer(Modifier.height(12.dp))
+                if (user !== null) {
+                    Profile(user.username)
+                    Divider()
+                }
+                Spacer(modifier = Modifier.height(16.dp))
                 items.forEach { item ->
                     NavigationDrawerItem(
                         icon = { Icon(ImageVector.vectorResource(id = item.image), contentDescription = stringResource(item.title)) },
@@ -79,7 +97,13 @@ fun MainDrawer() {
             }
         },
     ) {
-        NavHost(navController = navController, startDestination = "manga") {
+        NavHost(navController = navController, startDestination = "login") {
+            composable("login") {
+                UserLogin(
+                    onLoginClick = { authUser -> userViewModel.login(authUser) },
+                    errors = userViewModel.uiState.errors
+                )
+            }
             mangaGraph(
                 navController = navController,
                 onMainMenuOpen = onMainMenuOpen,

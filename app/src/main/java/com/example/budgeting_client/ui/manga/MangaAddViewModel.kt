@@ -21,7 +21,7 @@ data class MangaAddUiState (
     val isSaveComplete: Boolean = false,
     val isSaving: Boolean = false,
     val hasUnknownError: Boolean = false,
-    val errors: AppErrors? = null
+    val errors: AppErrors<CrawlerErrors>? = null
 )
 
 // reduce

@@ -1,10 +1,11 @@
 package com.example.budgeting_client.repositories
 
 import android.util.Log
+import com.example.budgeting_client.models.AppCrawlerErrors
+import com.example.budgeting_client.models.AppResult
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.Manga
-import com.example.budgeting_client.models.AppResult
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.gson
 
@@ -12,24 +13,37 @@ import com.example.budgeting_client.utils.gson
 class MangaRepository constructor(
     private val remoteSource: MangaNetworkDataSource
 ) {
-    suspend fun getMangas(): AppResult<List<Manga>> {
+    suspend fun getMangas(): AppResult<List<Manga>, CrawlerErrors> {
         try {
             val response = remoteSource.getManga()
 
-            return if (response.code() == 200) {
-                AppResult(
-                    isSuccessful = true,
-                    value = response.body()?.map { model -> Manga(model) } ?: emptyList(),
-                    errors = null
-                )
-            } else {
-                Log.e("BUDGETING_ERROR", "Unable to getCrawlers. Server responded with ${response.code()}.")
+            return when (response.code()) {
+                200 -> {
+                    val body = response.body()
 
-                AppResult(
-                    isSuccessful = false,
-                    value = null,
-                    errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
-                )
+                    if (body === null) {
+                        AppResult(
+                            isSuccessful = false,
+                            value = null,
+                            errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+                        )
+                    } else {
+                        AppResult(
+                            isSuccessful = true,
+                            value = body.map { model -> Manga(model) },
+                            errors = null
+                        )
+                    }
+                }
+                else -> {
+                    Log.e("BUDGETING_ERROR", "Unable to getCrawlers. Server responded with ${response.code()}.")
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+                    )
+                }
             }
         } catch (e: Exception) {
             Log.e("BUDGETING_ERROR", e.message ?: "Unable to getCrawlers.")
@@ -43,7 +57,7 @@ class MangaRepository constructor(
         }
     }
 
-    suspend fun saveCrawler(crawler: CreateCrawlerPayload): AppResult<Unit> {
+    suspend fun saveCrawler(crawler: CreateCrawlerPayload): AppResult<Unit, CrawlerErrors> {
         try {
             val response = remoteSource.saveCrawler(crawler)
 
@@ -57,10 +71,12 @@ class MangaRepository constructor(
                     AppResult(
                         isSuccessful = false,
                         value = null,
-                        errors = gson.fromJson(
-                            response.errorBody()!!.string(),
-                            AppErrors::class.java
-                        )
+                        errors = response.errorBody()?.let {
+                            gson.fromJson(
+                                it.string(),
+                                AppCrawlerErrors
+                            )
+                        } ?: AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
                     )
                 }
                 else -> {

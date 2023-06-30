@@ -9,4 +9,6 @@
     <string name="cooking_title">Cooking</string>
     <string name="restaurants_title">Restaurants</string>
     <string name="finance_title">Finance</string>
+    <string name="username_title">Username</string>
+    <string name="password_title">Password</string>
 </resources>

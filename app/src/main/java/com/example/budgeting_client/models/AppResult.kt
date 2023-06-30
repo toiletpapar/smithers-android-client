@@ -7,4 +7,4 @@ interface AppError {
     val message: String
 }
 
-data class AppResult<T>(val isSuccessful: Boolean, val value: T?, val errors: AppErrors?) {}
+data class AppResult<T, E: AppError>(val isSuccessful: Boolean, val value: T?, val errors: AppErrors<E>?) {}

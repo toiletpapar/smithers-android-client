@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 data class MangaMainUiState (
     val mangas: List<Manga> = emptyList(),
     val hasUnknownError: Boolean = false,
-    val errors: AppErrors? = null
+    val errors: AppErrors<CrawlerErrors>? = null
 )
 
 // reduce
