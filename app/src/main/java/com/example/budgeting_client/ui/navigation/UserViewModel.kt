@@ -96,9 +96,11 @@ class UserViewModel constructor(
                 // Get the Application object from extras
                 val application = checkNotNull(extras[APPLICATION_KEY])
 
-                return UserViewModel(
-                    (application as SmithersApplication).userRepository
-                ) as T
+                return (application as SmithersApplication).userRepository?.let {
+                    UserViewModel(
+                        it
+                    )
+                } as T
             }
         }
     }

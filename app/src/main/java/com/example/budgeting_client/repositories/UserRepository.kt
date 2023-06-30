@@ -7,10 +7,11 @@ import com.example.budgeting_client.models.AuthUser
 import com.example.budgeting_client.models.User
 import com.example.budgeting_client.models.AuthUserErrors
 import com.example.budgeting_client.utils.AppErrors
-import com.example.budgeting_client.utils.gson
+import com.google.gson.Gson
 
 class UserRepository constructor(
-    private val remoteSource: UserNetworkDataSource
+    private val remoteSource: UserNetworkDataSource,
+    private val gson: Gson
 ) {
     suspend fun login(user: AuthUser): AppResult<User, AuthUserErrors> {
         try {

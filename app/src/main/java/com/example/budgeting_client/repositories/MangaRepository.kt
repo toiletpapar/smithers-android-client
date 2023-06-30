@@ -7,11 +7,12 @@ import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.Manga
 import com.example.budgeting_client.utils.AppErrors
-import com.example.budgeting_client.utils.gson
+import com.google.gson.Gson
 
 // Defines how to access crawler data in the application
 class MangaRepository constructor(
-    private val remoteSource: MangaNetworkDataSource
+    private val remoteSource: MangaNetworkDataSource,
+    private val gson: Gson
 ) {
     suspend fun getMangas(): AppResult<List<Manga>, CrawlerErrors> {
         try {

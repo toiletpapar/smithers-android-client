@@ -1,6 +1,5 @@
 package com.example.budgeting_client.ui.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding

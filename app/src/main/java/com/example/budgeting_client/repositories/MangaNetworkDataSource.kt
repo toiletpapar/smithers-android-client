@@ -5,8 +5,8 @@ import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.getNullable
-import com.example.budgeting_client.utils.gson
 import com.example.budgeting_client.utils.parseDate
+import com.google.gson.Gson
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -44,7 +44,7 @@ data class MangaApiModel(
     val mangaUpdates: List<MangaUpdateApiModel>
 )
 
-class MangaApiModelSerializer : JsonDeserializer<MangaApiModel> {
+class MangaApiModelSerializer(private val gson: Gson) : JsonDeserializer<MangaApiModel> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,

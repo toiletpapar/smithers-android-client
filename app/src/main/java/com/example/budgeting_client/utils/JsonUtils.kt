@@ -29,13 +29,20 @@ fun JsonObject.getNullable(key: String): JsonElement? {
     return value
 }
 
-val gson: Gson = GsonBuilder()
-    .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelSerializer())
-    .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
-    .registerTypeAdapter(AppCrawlerErrors, MangaApiErrorModelDeserializer())
-    .registerTypeAdapter(AppAuthUserErrors, AuthUserApiErrorModelDeserializer())
-    .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
-    .registerTypeAdapter(CreateCrawlerPayload::class.java, CreateCrawlerPayloadSerializer())
-    .registerTypeAdapter(UserApiModel::class.java, UserApiModelDeserializer())
-    .serializeNulls()
-    .create()
+fun initializeGson(): Gson {
+    // Builder for types depended on in other serializers
+    val parentGsonBuilder: GsonBuilder = GsonBuilder()
+        .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
+        .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
+        .serializeNulls()
+
+    return parentGsonBuilder
+        .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelSerializer(parentGsonBuilder.create()))
+        .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
+        .registerTypeAdapter(AppCrawlerErrors, MangaApiErrorModelDeserializer())
+        .registerTypeAdapter(AppAuthUserErrors, AuthUserApiErrorModelDeserializer())
+        .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
+        .registerTypeAdapter(CreateCrawlerPayload::class.java, CreateCrawlerPayloadSerializer())
+        .registerTypeAdapter(UserApiModel::class.java, UserApiModelDeserializer())
+        .create()
+}

@@ -1,22 +1,22 @@
 package com.example.budgeting_client.utils
 
-import android.util.Log
 import android.webkit.CookieManager
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import com.google.gson.Gson
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-// TODO: Replace domain here and in network-security-config
-const val HOST = "http://10.0.2.2:8080/"
-class CookieInterceptor : Interceptor {
+class CookieInterceptor(private val host: String, private val dataStore: DataStore<Preferences>) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val requestBuilder = chain.request().newBuilder()
 
         // Add stored cookies to the request headers
         val cookieManager = CookieManager.getInstance()
-        val storedCookies = cookieManager.getCookie(HOST)
+        val storedCookies = cookieManager.getCookie(host)
         if (storedCookies != null && storedCookies.isNotEmpty()) {
             requestBuilder.addHeader("Cookie", storedCookies)
         }
@@ -29,16 +29,19 @@ class CookieInterceptor : Interceptor {
 
         // Process and store the received cookies
         if (cookieHeaders.isNotEmpty()) {
-            cookieManager.setCookie(HOST, cookieHeaders.joinToString(separator = "; "))
+            cookieManager.setCookie(host, cookieHeaders.joinToString(separator = "; "))
         }
 
         return response
     }
 }
-
-val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(CookieInterceptor()).build()
-val retrofit: Retrofit = Retrofit.Builder()
-    .baseUrl(HOST)
-    .client(client)
-    .addConverterFactory(GsonConverterFactory.create(gson))
-    .build()
+fun initializeHttpClient(interceptor: Interceptor): OkHttpClient {
+    return OkHttpClient.Builder().addInterceptor(interceptor).build()
+}
+fun initializeRetrofit(host: String, client: OkHttpClient, gson: Gson): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl(host)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+}

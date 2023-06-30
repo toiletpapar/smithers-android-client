@@ -72,9 +72,12 @@ class MangaMainViewModel constructor(
                 // Get the Application object from extras
                 val application = checkNotNull(extras[APPLICATION_KEY])
 
-                return MangaMainViewModel(
-                    (application as SmithersApplication).mangaRepository
-                ) as T
+                // Assume application created
+                return (application as SmithersApplication).mangaRepository?.let {
+                    MangaMainViewModel(
+                        it
+                    )
+                } as T
             }
         }
     }

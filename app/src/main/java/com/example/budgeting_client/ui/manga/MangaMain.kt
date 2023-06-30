@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.models.CrawlerErrors
-import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,8 +36,10 @@ fun MangaMain(
     val snackbarHostState = remember { SnackbarHostState() }
     val mangas = mangaMainViewModel.uiState.mangas
 
-    LaunchedEffect(Unit) {
-        mangaMainViewModel.getMangas()
+    LaunchedEffect(mangas) {
+        if (mangas.isEmpty()) {
+            mangaMainViewModel.getMangas()
+        }
     }
 
     LaunchedEffect(mangaMainViewModel.uiState.hasUnknownError) {
