@@ -2,6 +2,7 @@ package com.example.budgeting_client
 
 import android.app.Application
 import android.os.Bundle
+import android.webkit.CookieManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.budgeting_client.repositories.MangaNetworkDataSource
@@ -23,6 +24,9 @@ class SmithersApplication : Application() {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize cookieManager instance
+        CookieManager.getInstance()
 
         setContent {
             BudgetingclientTheme {

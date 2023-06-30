@@ -1,5 +1,6 @@
 package com.example.budgeting_client.utils
 
+import android.util.Log
 import android.webkit.CookieManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

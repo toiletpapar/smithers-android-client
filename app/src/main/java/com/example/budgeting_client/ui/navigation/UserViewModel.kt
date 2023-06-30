@@ -59,6 +59,33 @@ class UserViewModel constructor(
         }
     }
 
+    fun logout() {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            try {
+                val response = userRepository.logout()
+
+                uiState = if (response.isSuccessful) {
+                    uiState.copy(
+                        user = null,
+                        errors = null
+                    )
+                } else {
+                    uiState.copy(
+                        errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR)),
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("BUDGETING_ERROR", e.message ?: "Unable to login.")
+                Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+                uiState = uiState.copy(
+                    errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR)),
+                )
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

@@ -1,5 +1,6 @@
 package com.example.budgeting_client.ui.user
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -70,7 +71,7 @@ fun UserLogin(
             TextField(
                 modifier = modifier,
                 value = authUser.username,
-                onValueChange = { authUser = authUser.copy(username = it) },
+                onValueChange = { authUser = authUser.copy(username = it.trim()) },
                 label = { Text(stringResource(id = R.string.username_title)) },
                 singleLine = true,
                 isError = errors?.hasOneOfError(listOf(AuthUserErrors.EMPTY_USERNAME)) ?: false,
@@ -80,7 +81,7 @@ fun UserLogin(
             TextField(
                 modifier = modifier,
                 value = authUser.password,
-                onValueChange = { authUser = authUser.copy(password = it) },
+                onValueChange = { authUser = authUser.copy(password = it.trim()) },
                 label = { Text(stringResource(id = R.string.password_title)) },
                 singleLine = true,
                 visualTransformation = if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,

@@ -7,7 +7,7 @@ import com.example.budgeting_client.R
 sealed class MainItem (
     @DrawableRes val image: Int,
     @StringRes val title: Int,
-    val route: String,
+    val route: String
 ) {
     // Manga
     object Manga: MainItem(R.drawable.book, R.string.manga_title, "manga/index")

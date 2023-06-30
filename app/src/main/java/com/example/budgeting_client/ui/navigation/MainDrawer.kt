@@ -1,5 +1,6 @@
 package com.example.budgeting_client.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.budgeting_client.R
 import com.example.budgeting_client.ui.finance.FinanceMain
 import com.example.budgeting_client.ui.manga.mangaGraph
 import com.example.budgeting_client.ui.user.UserLogin
@@ -53,15 +56,25 @@ fun MainDrawer(
         MainItem.Restaurants,
         MainItem.Finance
     )
-    var selectedItem by remember { mutableStateOf(items[0]) }
+    var selectedItem: MainItem? by remember { mutableStateOf(null) }
 
     val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
 
     val user = userViewModel.uiState.user
 
-    LaunchedEffect(user) {
-        if (user !== null) {
-            navController.navigate(MainItem.Manga.route)
+    LaunchedEffect(user, currentRoute) {
+        if (user !== null && currentRoute === "login") {
+            selectedItem = MainItem.Manga
+            navController.navigate(MainItem.Manga.route) {
+                launchSingleTop = true
+            }
+        } else if (user === null && currentRoute !== "login") {
+            selectedItem = null
+            navController.navigate("login") {
+                launchSingleTop = true
+            }
         }
     }
 
@@ -94,6 +107,16 @@ fun MainDrawer(
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
                     )
                 }
+                NavigationDrawerItem(
+                    icon = { Icon(ImageVector.vectorResource(id = R.drawable.logout), contentDescription = stringResource(R.string.logout)) },
+                    label = { Text(stringResource(id = R.string.logout)) },
+                    selected = selectedItem === null,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        userViewModel.logout()
+                    },
+                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                )
             }
         },
     ) {

@@ -64,7 +64,48 @@ class UserRepository constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.e("BUDGETING_ERROR", e.message ?: "Unable to getCrawlers.")
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to login.")
+            Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+            return AppResult(
+                isSuccessful = false,
+                value = null,
+                errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR))
+            )
+        }
+    }
+
+    suspend fun logout(): AppResult<User, AuthUserErrors> {
+        try {
+            val response = remoteSource.logout()
+
+            return when (response.code()) {
+                200 -> {
+                    AppResult(
+                        isSuccessful = true,
+                        value = null,
+                        errors = null
+                    )
+                }
+                401 -> {
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(AuthUserErrors.UNAUTHORIZED))
+                    )
+                }
+                else -> {
+                    Log.e("BUDGETING_ERROR", "Unable to logout. Server responded with ${response.code()}.")
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to logout.")
             Log.e("BUDGETING_ERROR", e.stackTraceToString())
 
             return AppResult(
