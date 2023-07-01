@@ -10,7 +10,6 @@ fun NavGraphBuilder.mangaGraph(
     navController: NavController,
     onMainMenuOpen: () -> Unit,
 ) {
-
     navigation(startDestination = MainItem.Manga.route, route = "manga") {
         composable(MainItem.Manga.route) {
             MangaMain(

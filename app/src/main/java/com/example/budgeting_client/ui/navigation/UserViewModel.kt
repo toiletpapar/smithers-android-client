@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 // initial state
 data class UserUiState (
     val user: User? = null,
+    val initialLoadComplete: Boolean = false,
     val errors: AppErrors<AuthUserErrors>? = null
 )
 
@@ -30,6 +31,35 @@ class UserViewModel constructor(
 ) : ViewModel() {
     var uiState by mutableStateOf(UserUiState())
         private set
+
+    private var fetchUserInfoJob: Job? = null
+    fun initMyUserInfo() {
+        fetchUserInfoJob?.cancel()
+        fetchUserInfoJob = viewModelScope.launch {
+            try {
+                val response = userRepository.getMyUserInfo()
+
+                uiState = if (response.isSuccessful) {
+                    uiState.copy(
+                        user = response.value,
+                        errors = null,
+                        initialLoadComplete = true
+                    )
+                } else {
+                    uiState.copy(
+                        initialLoadComplete = true,
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("BUDGETING_ERROR", e.message ?: "Unable to get own user info initially.")
+                Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+                uiState = uiState.copy(
+                    initialLoadComplete = true,
+                )
+            }
+        }
+    }
 
     private var fetchJob: Job? = null
     fun login(authUser: AuthUser) {
@@ -59,9 +89,10 @@ class UserViewModel constructor(
         }
     }
 
+    private var deleteJob: Job? = null
     fun logout() {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
+        deleteJob?.cancel()
+        deleteJob = viewModelScope.launch {
             try {
                 val response = userRepository.logout()
 

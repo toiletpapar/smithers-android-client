@@ -63,13 +63,17 @@ fun MainDrawer(
 
     val user = userViewModel.uiState.user
 
+    LaunchedEffect(Unit) {
+        userViewModel.initMyUserInfo()
+    }
+
     LaunchedEffect(user, currentRoute) {
-        if (user !== null && currentRoute === "login") {
+        if (user != null && currentRoute != null && currentRoute == "login") {
             selectedItem = MainItem.Manga
             navController.navigate(MainItem.Manga.route) {
                 launchSingleTop = true
             }
-        } else if (user === null && currentRoute !== "login") {
+        } else if (user == null && currentRoute != null && currentRoute != "login" && currentRoute != "skeleton") {
             selectedItem = null
             navController.navigate("login") {
                 launchSingleTop = true
@@ -109,7 +113,7 @@ fun MainDrawer(
                 NavigationDrawerItem(
                     icon = { Icon(ImageVector.vectorResource(id = R.drawable.logout), contentDescription = stringResource(R.string.logout)) },
                     label = { Text(stringResource(id = R.string.logout)) },
-                    selected = selectedItem === null,
+                    selected = selectedItem == null,
                     onClick = {
                         scope.launch { drawerState.close() }
                         userViewModel.logout()
@@ -119,21 +123,24 @@ fun MainDrawer(
             }
         },
     ) {
-        NavHost(navController = navController, startDestination = "login") {
-            composable("login") {
-                UserLogin(
-                    onLoginClick = { authUser -> userViewModel.login(authUser) },
-                    errors = userViewModel.uiState.errors
+        if (userViewModel.uiState.initialLoadComplete)
+            NavHost(navController = navController, startDestination = if (user == null) "login" else "manga") {
+                composable("login") {
+                    UserLogin(
+                        onLoginClick = { authUser -> userViewModel.login(authUser) },
+                        errors = userViewModel.uiState.errors
+                    )
+                }
+                mangaGraph(
+                    navController = navController,
+                    onMainMenuOpen = onMainMenuOpen,
                 )
+                composable(MainItem.Health.route) { FinanceMain(onMainMenuOpen) }
+                composable(MainItem.Cooking.route) { FinanceMain(onMainMenuOpen) }
+                composable(MainItem.Restaurants.route) { FinanceMain(onMainMenuOpen) }
+                composable(MainItem.Finance.route) { FinanceMain(onMainMenuOpen) }
             }
-            mangaGraph(
-                navController = navController,
-                onMainMenuOpen = onMainMenuOpen,
-            )
-            composable(MainItem.Health.route) { FinanceMain(onMainMenuOpen) }
-            composable(MainItem.Cooking.route) { FinanceMain(onMainMenuOpen) }
-            composable(MainItem.Restaurants.route) { FinanceMain(onMainMenuOpen) }
-            composable(MainItem.Finance.route) { FinanceMain(onMainMenuOpen) }
-        }
+        else
+            SkeletonLoader()
     }
 }

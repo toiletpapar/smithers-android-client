@@ -13,6 +13,57 @@ class UserRepository constructor(
     private val remoteSource: UserNetworkDataSource,
     private val gson: Gson
 ) {
+    suspend fun getMyUserInfo(): AppResult<User, AuthUserErrors> {
+        try {
+            val response = remoteSource.getMyUserInfo()
+
+            return when (response.code()) {
+                200 -> {
+                    val body = response.body()
+
+                    if (body == null) {
+                        AppResult(
+                            isSuccessful = false,
+                            value = null,
+                            errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR))
+                        )
+                    } else {
+                        AppResult(
+                            isSuccessful = true,
+                            value = User(body),
+                            errors = null
+                        )
+                    }
+                }
+                401 -> {
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(AuthUserErrors.UNAUTHORIZED))
+                    )
+                }
+                else -> {
+                    Log.e("BUDGETING_ERROR", "Unable to login. Server responded with ${response.code()}.")
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to login.")
+            Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+            return AppResult(
+                isSuccessful = false,
+                value = null,
+                errors = AppErrors(listOf(AuthUserErrors.UNKNOWN_ERROR))
+            )
+        }
+    }
+
     suspend fun login(user: AuthUser): AppResult<User, AuthUserErrors> {
         try {
             val response = remoteSource.login(user)
@@ -21,7 +72,7 @@ class UserRepository constructor(
                 200 -> {
                     val body = response.body()
 
-                    if (body === null) {
+                    if (body == null) {
                         AppResult(
                             isSuccessful = false,
                             value = null,

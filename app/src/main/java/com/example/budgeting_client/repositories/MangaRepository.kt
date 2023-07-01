@@ -22,7 +22,7 @@ class MangaRepository constructor(
                 200 -> {
                     val body = response.body()
 
-                    if (body === null) {
+                    if (body == null) {
                         AppResult(
                             isSuccessful = false,
                             value = null,

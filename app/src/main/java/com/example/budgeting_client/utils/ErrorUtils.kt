@@ -24,7 +24,7 @@ class AppErrors<T : AppError>(private val errors: List<T>?) {
     }
 
     fun hasOneOfError(hasErrors: List<T>): Boolean {
-        return errors?.any { error -> hasErrors.any { appError -> error.name === appError.name} } ?: false
+        return errors?.any { error -> hasErrors.any { appError -> error.name == appError.name} } ?: false
     }
 }
 

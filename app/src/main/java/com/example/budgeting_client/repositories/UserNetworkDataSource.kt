@@ -10,6 +10,7 @@ import com.google.gson.JsonElement
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.POST
 import java.lang.reflect.Type
 
@@ -66,6 +67,9 @@ class AuthUserApiErrorModelDeserializer : JsonDeserializer<AppErrors<AuthUserErr
 }
 
 interface UserNetworkDataSource {
+    @GET("api/v1/user/me")
+    suspend fun getMyUserInfo(): Response<UserApiModel>
+
     @POST("auth/v1/login")
     suspend fun login(@Body user: AuthUser): Response<UserApiModel>
 
