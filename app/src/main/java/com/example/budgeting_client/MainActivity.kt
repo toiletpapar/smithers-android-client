@@ -28,7 +28,8 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 // Application dependencies
 class SmithersApplication : Application() {
     // TODO: Replace domain here and in network-security-config
-    private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!
+//    private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
+    private val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
     private val gson = initializeGson()
 
     var mangaRepository: MangaRepository? = null
