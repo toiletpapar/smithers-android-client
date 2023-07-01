@@ -113,7 +113,7 @@ fun MainDrawer(
                 NavigationDrawerItem(
                     icon = { Icon(ImageVector.vectorResource(id = R.drawable.logout), contentDescription = stringResource(R.string.logout)) },
                     label = { Text(stringResource(id = R.string.logout)) },
-                    selected = selectedItem == null,
+                    selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
                         userViewModel.logout()
