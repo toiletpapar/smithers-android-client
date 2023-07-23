@@ -3,6 +3,7 @@ package com.example.budgeting_client.utils
 import com.example.budgeting_client.models.AppCrawlerErrors
 import com.example.budgeting_client.models.AppAuthUserErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
+import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.repositories.AuthUserApiErrorModelDeserializer
 import com.example.budgeting_client.repositories.CrawlerApiModel
 import com.example.budgeting_client.repositories.CrawlerApiModelDeserializer
@@ -12,6 +13,7 @@ import com.example.budgeting_client.repositories.MangaApiModel
 import com.example.budgeting_client.repositories.MangaApiModelSerializer
 import com.example.budgeting_client.repositories.MangaUpdateApiModel
 import com.example.budgeting_client.repositories.MangaUpdateApiModelDeserializer
+import com.example.budgeting_client.repositories.UpdateCrawlerPayloadSerializer
 import com.example.budgeting_client.repositories.UserApiModel
 import com.example.budgeting_client.repositories.UserApiModelDeserializer
 import com.google.gson.Gson
@@ -34,15 +36,18 @@ fun initializeGson(): Gson {
     val parentGsonBuilder: GsonBuilder = GsonBuilder()
         .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
         .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
+        .registerTypeAdapter(CreateCrawlerPayload::class.java, CreateCrawlerPayloadSerializer())
         .serializeNulls()
 
+    val parentGson = parentGsonBuilder.create()
+
     return parentGsonBuilder
-        .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelSerializer(parentGsonBuilder.create()))
+        .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelSerializer(parentGson))
         .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
         .registerTypeAdapter(AppCrawlerErrors, MangaApiErrorModelDeserializer())
         .registerTypeAdapter(AppAuthUserErrors, AuthUserApiErrorModelDeserializer())
         .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
-        .registerTypeAdapter(CreateCrawlerPayload::class.java, CreateCrawlerPayloadSerializer())
         .registerTypeAdapter(UserApiModel::class.java, UserApiModelDeserializer())
+        .registerTypeAdapter(UpdateCrawlerPayload::class.java, UpdateCrawlerPayloadSerializer(parentGson))
         .create()
 }

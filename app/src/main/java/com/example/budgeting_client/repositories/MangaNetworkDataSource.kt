@@ -3,10 +3,12 @@ package com.example.budgeting_client.repositories
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
+import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.getNullable
 import com.example.budgeting_client.utils.parseDate
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -16,7 +18,9 @@ import com.google.gson.JsonSerializer
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.lang.reflect.Type
 import java.util.Date
@@ -183,12 +187,38 @@ class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload> {
     }
 }
 
+class UpdateCrawlerPayloadSerializer(private val gson: Gson) : JsonSerializer<UpdateCrawlerPayload> {
+    override fun serialize(
+        crawler: UpdateCrawlerPayload,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
+        val payloadJson = JsonObject()
+
+        payloadJson.add("data", gson.toJsonTree(crawler.data, CreateCrawlerPayload::class.java))
+
+        val propertiesJson = JsonArray()
+        crawler.properties.forEach {
+            propertiesJson.add(it)
+        }
+        payloadJson.add("properties", propertiesJson)
+
+        return payloadJson
+    }
+}
+
 // Defines how to access crawler data in the data source
 interface MangaNetworkDataSource {
     @GET("api/v1/manga")
     suspend fun getManga(@Query("onlyLatest") onlyLatest: Boolean? = true): Response<List<MangaApiModel>>
 
+    @GET("api/v1/crawl-targets/{crawlTargetId}")
+    suspend fun getCrawler(@Path("crawlTargetId") crawlTargetId: Int): Response<CrawlerApiModel>
+
     @POST("api/v1/crawl-targets")
     suspend fun saveCrawler(@Body crawler: CreateCrawlerPayload): Response<CrawlerApiModel>
+
+    @PATCH("api/v1/crawl-targets/{crawlTargetId}")
+    suspend fun updateCrawler(@Path("crawlTargetId") crawlTargetId: Int, @Body updateCrawler: UpdateCrawlerPayload): Response<CrawlerApiModel>
 }
 

@@ -11,7 +11,15 @@ data class CreateCrawlerPayload(
     var name: String,
     var url: String,
     var adapter: CrawlerTypes,
-) : Parcelable
+) : Parcelable {
+    fun clone(): CreateCrawlerPayload {
+        return CreateCrawlerPayload(
+            name = this.name,
+            url = this.url,
+            adapter = this.adapter
+        )
+    }
+}
 
 enum class CrawlerErrors(override val message: String) : AppError {
     DUPLICATE_NAME_KEY("Crawler already exists. Choose a different crawler name."),

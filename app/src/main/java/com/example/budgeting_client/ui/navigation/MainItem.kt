@@ -11,7 +11,6 @@ sealed class MainItem (
 ) {
     // Manga
     object Manga: MainItem(R.drawable.book, R.string.manga_title, "manga/index")
-    object MangaAdd: MainItem(R.drawable.book, R.string.manga_add_title, "manga/add")
 
     // Health
     object Health: MainItem(R.drawable.health, R.string.health_title, "health")

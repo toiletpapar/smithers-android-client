@@ -2,6 +2,7 @@
     <string name="app_name">SmithersApplication</string>
     <string name="manga_title">Manga</string>
     <string name="manga_add_title">Add Manga</string>
+    <string name="manga_edit_title">Edit Manga</string>
     <string name="manga_title_form">Manga Title</string>
     <string name="manga_url_form">URL</string>
     <string name="manga_adapter_form">Adapter</string>

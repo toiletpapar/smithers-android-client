@@ -49,7 +49,8 @@ fun MangaCard(
     lastUpdated: Date?,  // The date this chapter was catalogued
     lastRemoteSync: Date?, // The latest date the crawler successfully retrieved data from remote
     urlString: String, // The remote source
-    isRead: Boolean
+    isRead: Boolean,
+    onEditClick: () -> Unit
 ) {
     val context = LocalContext.current
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
@@ -119,7 +120,7 @@ fun MangaCard(
                 ) {
                     DropdownMenuItem(
                         text = { Text("Edit") },
-                        onClick = { /* Handle edit! */ },
+                        onClick = { onEditClick() },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Edit,

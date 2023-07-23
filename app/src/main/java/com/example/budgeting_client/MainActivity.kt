@@ -22,14 +22,18 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
+// TODO: Add ability to edit a crawler
+// TODO: Add sorting to manga, add ranking attribute for custom sorting, add ranking -> date of new release as default sort
+// TODO: Add ability to sync the entirety of a crawler
+// TODO: Memoization for efficient recompose
 // Declare data store
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 // Application dependencies
 class SmithersApplication : Application() {
-    // TODO: Replace domain here and in network-security-config
-//    private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
-    private val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
+    private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
+//    private val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
+//    private val url = "https://tylerpoon.ca".toHttpUrlOrNull()!!          // Production
     private val gson = initializeGson()
 
     var mangaRepository: MangaRepository? = null

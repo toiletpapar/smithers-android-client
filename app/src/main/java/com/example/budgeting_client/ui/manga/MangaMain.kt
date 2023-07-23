@@ -31,6 +31,7 @@ import com.example.budgeting_client.models.CrawlerErrors
 fun MangaMain(
     onDrawerOpen: () -> Unit,
     onAddClick: () -> Unit,
+    onEditClick: (crawlTargetId: Int) -> Unit,
     mangaMainViewModel: MangaMainViewModel = viewModel(factory = MangaMainViewModel.Factory),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -100,7 +101,8 @@ fun MangaMain(
                             lastUpdated = latestUpdate?.crawledOn,
                             urlString = latestUpdate?.readAt ?: manga.url, // Direct to chapter or where it is crawled (usually the manga index page)
                             isRead = latestUpdate?.isRead ?: false,
-                            lastRemoteSync = manga.lastCrawledOn
+                            lastRemoteSync = manga.lastCrawledOn,
+                            onEditClick = { onEditClick(manga.crawlTargetId) }
                         )
                     }
                 }
