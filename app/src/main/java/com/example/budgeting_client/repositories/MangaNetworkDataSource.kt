@@ -4,6 +4,7 @@ import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
+import com.example.budgeting_client.models.UpdateReadStatusPayload
 import com.example.budgeting_client.utils.AppErrors
 import com.example.budgeting_client.utils.getNullable
 import com.example.budgeting_client.utils.parseDate
@@ -20,6 +21,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.lang.reflect.Type
@@ -37,10 +39,11 @@ data class CrawlerApiModel(
 data class MangaUpdateApiModel(
     val mangaUpdateId: Int,
     val crawledOn: Date,
-    val chapter: Short,
+    val chapter: Float,
     val chapterName: String? = null,
     val isRead: Boolean,
-    val readAt: String
+    val readAt: String,
+    val dateCreated: Date
 )
 
 data class MangaApiModel(
@@ -118,10 +121,12 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
         val mangaUpdateId = jsonObject.getNullable("mangaUpdateId")?.asInt ?: return null
         val crawledOnString = jsonObject.getNullable("crawledOn")?.asString ?: return null
         val crawledOn = parseDate(crawledOnString) ?: return null
-        val chapter = jsonObject.getNullable("chapter")?.asShort ?: return null
+        val chapter = jsonObject.getNullable("chapter")?.asFloat ?: return null
         val chapterName = jsonObject.getNullable("chapterName")?.asString
         val isRead = jsonObject.getNullable("isRead")?.asBoolean ?: return null
         val readAt = jsonObject.getNullable("readAt")?.asString ?: return null
+        val dateCreatedString = jsonObject.getNullable("dateCreated")?.asString ?: return null
+        val dateCreated = parseDate(dateCreatedString) ?: return null
 
         return MangaUpdateApiModel(
             mangaUpdateId,
@@ -129,7 +134,8 @@ class MangaUpdateApiModelDeserializer : JsonDeserializer<MangaUpdateApiModel> {
             chapter,
             chapterName,
             isRead,
-            readAt
+            readAt,
+            dateCreated
         )
     }
 }
@@ -223,5 +229,8 @@ interface MangaNetworkDataSource {
 
     @PATCH("api/v1/manga/{crawlTargetId}")
     suspend fun syncManga(@Path("crawlTargetId") crawlTargetId: Int): Response<Unit>
+
+    @PUT("api/v1/manga-update/{mangaUpdateId}/isRead")
+    suspend fun updateReadStatus(@Path("mangaUpdateId") mangaUpdateId: Int, @Body readStatus: UpdateReadStatusPayload): Response<MangaUpdateApiModel>
 }
 

@@ -1,5 +1,7 @@
 package com.example.budgeting_client.ui.manga
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,10 +23,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.ReadStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,19 +106,29 @@ fun MangaMain(
 
                     Box(Modifier.fillMaxWidth().height(160.dp)) {
                         val latestUpdate = manga.updates.getOrNull(0)
-
+                        val context = LocalContext.current
                         MangaCard(
                             modifier = Modifier
                                 .fillMaxWidth(0.9F)
                                 .align(Alignment.Center),
                             title = manga.name,
                             chapter = latestUpdate?.chapter,
-                            lastUpdated = latestUpdate?.crawledOn,
-                            urlString = latestUpdate?.readAt ?: manga.url, // Direct to chapter or where it is crawled (usually the manga index page)
+                            lastUpdated = latestUpdate?.dateCreated,
                             isRead = latestUpdate?.isRead ?: false,
-                            lastRemoteSync = manga.lastCrawledOn,
+                            latestCrawlSuccess = manga.crawlSuccess,
                             onEditClick = { onEditClick(manga.crawlTargetId) },
-                            onSyncClick = { mangaMainViewModel.syncManga(manga.crawlTargetId) }
+                            onSyncClick = { mangaMainViewModel.syncManga(manga.crawlTargetId) },
+                            onCardClick = {
+                                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(latestUpdate?.readAt ?: manga.url))
+                                ContextCompat.startActivity(
+                                    context,
+                                    browserIntent,
+                                    null
+                                )
+                                latestUpdate?.let { update ->
+                                    mangaMainViewModel.updateReadStatus(update.mangaUpdateId, ReadStatus(true))
+                                }
+                            }
                         )
                     }
                 }

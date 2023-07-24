@@ -33,10 +33,11 @@ data class Manga(
 data class MangaUpdate(
     val mangaUpdateId: Int,
     val crawledOn: Date,
-    val chapter: Short,
+    val chapter: Float,
     val chapterName: String? = null,
     val isRead: Boolean,
-    val readAt: String
+    val readAt: String,
+    val dateCreated: Date
 ) : Parcelable {
     constructor(mangaUpdate: MangaUpdateApiModel) : this(
         mangaUpdateId = mangaUpdate.mangaUpdateId,
@@ -44,6 +45,7 @@ data class MangaUpdate(
         chapter = mangaUpdate.chapter,
         chapterName = mangaUpdate.chapterName,
         isRead = mangaUpdate.isRead,
-        readAt = mangaUpdate.readAt
+        readAt = mangaUpdate.readAt,
+        dateCreated = mangaUpdate.dateCreated
     )
 }

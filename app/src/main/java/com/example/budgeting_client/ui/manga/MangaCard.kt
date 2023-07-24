@@ -48,20 +48,18 @@ import java.util.TimeZone
 fun MangaCard(
     modifier: Modifier = Modifier,
     title: String, // The name of the crawler
-    chapter: Short?,
+    chapter: Float?,
     lastUpdated: Date?,  // The date this chapter was catalogued
-    lastRemoteSync: Date?, // The latest date the crawler successfully retrieved data from remote
-    urlString: String, // The remote source
+    latestCrawlSuccess: Boolean?, // The latest date the crawler successfully retrieved data from remote
     isRead: Boolean,
+    onCardClick: () -> Unit,
     onEditClick: () -> Unit,
     onSyncClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
     val expanded = remember { mutableStateOf(false) }
 
     Card(
-        onClick = { startActivity(context, browserIntent, null) },
+        onClick = { onCardClick() },
         modifier = modifier
     ) {
         Row(
@@ -79,8 +77,8 @@ fun MangaCard(
                         if (isRead) {
                             Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
                         }
-                        if (lastRemoteSync != null && (System.currentTimeMillis() - lastRemoteSync.time) > (1000 * 60 * 60 * 24 * 3)) {
-                            // Last remote sync was more than 3 days ago
+                        if (latestCrawlSuccess != null && !latestCrawlSuccess) {
+                            // Last attempt at crawling ended in failure
                             Icon(ImageVector.vectorResource(id = R.drawable.exclamation), contentDescription = null, modifier = Modifier.size(16.dp))
                         }
                     }
