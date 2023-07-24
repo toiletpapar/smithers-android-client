@@ -59,6 +59,40 @@ class MangaRepository constructor(
         }
     }
 
+    suspend fun syncManga(crawlTargetId: Int): AppResult<Unit, CrawlerErrors> {
+        try {
+            val response = remoteSource.syncManga(crawlTargetId)
+
+            return when (response.code()) {
+                200 -> {
+                    AppResult(
+                        isSuccessful = true,
+                        value = null,
+                        errors = null
+                    )
+                }
+                else -> {
+                    Log.e("BUDGETING_ERROR", "Unable to sync crawler. Server responded with ${response.code()}.")
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to sync crawler.")
+            Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+            return AppResult(
+                isSuccessful = false,
+                value = null,
+                errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+            )
+        }
+    }
+
     suspend fun getCrawler(crawlTargetId: Int): AppResult<Manga, CrawlerErrors> {
         try {
             val response = remoteSource.getCrawler(crawlTargetId)

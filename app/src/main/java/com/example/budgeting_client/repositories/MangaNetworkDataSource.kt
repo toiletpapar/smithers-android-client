@@ -220,5 +220,8 @@ interface MangaNetworkDataSource {
 
     @PATCH("api/v1/crawl-targets/{crawlTargetId}")
     suspend fun updateCrawler(@Path("crawlTargetId") crawlTargetId: Int, @Body updateCrawler: UpdateCrawlerPayload): Response<CrawlerApiModel>
+
+    @PATCH("api/v1/manga/{crawlTargetId}")
+    suspend fun syncManga(@Path("crawlTargetId") crawlTargetId: Int): Response<Unit>
 }
 

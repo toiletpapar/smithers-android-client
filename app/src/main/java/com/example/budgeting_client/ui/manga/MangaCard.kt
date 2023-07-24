@@ -1,5 +1,6 @@
 package com.example.budgeting_client.ui.manga
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -39,7 +40,9 @@ import androidx.core.content.ContextCompat.startActivity
 import com.example.budgeting_client.R
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.TimeZone
 
+@SuppressLint("SimpleDateFormat")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MangaCard(
@@ -50,7 +53,8 @@ fun MangaCard(
     lastRemoteSync: Date?, // The latest date the crawler successfully retrieved data from remote
     urlString: String, // The remote source
     isRead: Boolean,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    onSyncClick: () -> Unit
 ) {
     val context = LocalContext.current
     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlString))
@@ -104,8 +108,10 @@ fun MangaCard(
                 }
 
                 if (lastUpdated != null) {
+                    val dateFormatter = SimpleDateFormat("MMM dd, yyyy hh:mm a z")
+                    dateFormatter.timeZone = TimeZone.getDefault()
                     Text(
-                        text = SimpleDateFormat.getDateTimeInstance().format(lastUpdated),
+                        text = dateFormatter.format(lastUpdated),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -130,7 +136,10 @@ fun MangaCard(
                     )
                     DropdownMenuItem(
                         text = { Text("Sync") },
-                        onClick = { /* Handle sync! */ },
+                        onClick = {
+                            expanded.value = false
+                            onSyncClick()
+                        },
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Refresh,

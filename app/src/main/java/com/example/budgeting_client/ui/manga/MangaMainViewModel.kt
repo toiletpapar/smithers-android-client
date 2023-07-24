@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 data class MangaMainUiState (
     val mangas: List<Manga> = emptyList(),
     val hasUnknownError: Boolean = false,
+    val ackSync: Boolean = false,
     val errors: AppErrors<CrawlerErrors>? = null
 )
 
@@ -52,6 +53,39 @@ class MangaMainViewModel constructor(
                 }
             } catch (e: Exception) {
                 Log.e("BUDGETING_ERROR", e.message ?: "Unable to retrieve crawlers.")
+                Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+                uiState = uiState.copy(
+                    errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR)),
+                    hasUnknownError = true
+                )
+            }
+        }
+    }
+
+    fun syncManga(crawlTargetId: Int) {
+        uiState = uiState.copy(
+            ackSync = false
+        )
+
+        viewModelScope.launch {
+            try {
+                val response = mangaRepository.syncManga(crawlTargetId)
+
+                uiState = if (response.isSuccessful) {
+                    uiState.copy(
+                        hasUnknownError = false,
+                        errors = null,
+                        ackSync = true
+                    )
+                } else {
+                    uiState.copy(
+                        errors = response.errors,
+                        hasUnknownError = response.errors?.hasOneOfError(listOf(CrawlerErrors.UNKNOWN_ERROR)) ?: false
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("BUDGETING_ERROR", e.message ?: "Unable to sync crawler.")
                 Log.e("BUDGETING_ERROR", e.stackTraceToString())
 
                 uiState = uiState.copy(

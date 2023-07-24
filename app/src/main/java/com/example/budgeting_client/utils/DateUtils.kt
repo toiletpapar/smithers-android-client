@@ -1,14 +1,14 @@
 package com.example.budgeting_client.utils
 
+import android.annotation.SuppressLint
 import android.util.Log
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
+@SuppressLint("SimpleDateFormat")
 fun parseDate(dateString: String): Date? {
-    // TODO: Locale aware times
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
     return try {
         format.parse(dateString)
     } catch (e: ParseException) {

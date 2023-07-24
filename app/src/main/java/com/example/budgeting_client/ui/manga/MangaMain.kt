@@ -49,6 +49,16 @@ fun MangaMain(
         }
     }
 
+    LaunchedEffect(mangaMainViewModel.uiState.ackSync) {
+        if (mangaMainViewModel.uiState.ackSync) {
+            // Keep this line until sync uses workers
+            mangaMainViewModel.getMangas()
+
+            // Give user feedback
+            snackbarHostState.showSnackbar("Sync acknowledged")
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -102,7 +112,8 @@ fun MangaMain(
                             urlString = latestUpdate?.readAt ?: manga.url, // Direct to chapter or where it is crawled (usually the manga index page)
                             isRead = latestUpdate?.isRead ?: false,
                             lastRemoteSync = manga.lastCrawledOn,
-                            onEditClick = { onEditClick(manga.crawlTargetId) }
+                            onEditClick = { onEditClick(manga.crawlTargetId) },
+                            onSyncClick = { mangaMainViewModel.syncManga(manga.crawlTargetId) }
                         )
                     }
                 }
