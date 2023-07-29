@@ -53,6 +53,7 @@ fun MangaCard(
     modifier: Modifier = Modifier,
     title: String, // The name of the crawler
     chapter: Float?,
+    chapterName: String?,
     lastUpdated: Date?,  // The date this chapter was catalogued
     latestCrawlSuccess: Boolean?, // The latest date the crawler successfully retrieved data from remote
     isRead: Boolean,
@@ -105,15 +106,22 @@ fun MangaCard(
                     maxLines = 2
                 )
 
+                if (chapterName != null) {
+                    Text(
+                        text = chapterName,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
                 if (chapter != null) {
                     Text(
                         text = stringResource(id = R.string.chapter) + " $chapter",
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 } else {
                     Text(
                         text = stringResource(id = R.string.no_recorded_chapters),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 }
 

@@ -114,6 +114,7 @@ fun MangaMain(
                                 .align(Alignment.Center),
                             title = manga.name,
                             chapter = latestUpdate?.chapter,
+                            chapterName = latestUpdate?.chapterName,
                             lastUpdated = latestUpdate?.dateCreated,
                             isRead = latestUpdate?.isRead ?: false,
                             isFavourite = manga.favourite,
