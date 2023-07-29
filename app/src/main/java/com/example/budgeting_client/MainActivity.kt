@@ -22,9 +22,10 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
-// TODO: Add ability to edit a crawler
-// TODO: Add sorting to manga, add ranking attribute for custom sorting, add ranking -> date of new release as default sort
-// TODO: Add ability to sync the entirety of a crawler
+// TODO: Add ability to import all crawlers through bookmark bar (adding one at a time is a pain)
+// TODO: Pull the most "popular" mangadex and webtoon comics, allow users to select from those instead of creating the crawlers manually
+// TODO: Add "Favourites" which are always filtered to the top
+// TODO: Add "Mark as Read" for Cards
 // TODO: Memoization for efficient recompose
 // Declare data store
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")

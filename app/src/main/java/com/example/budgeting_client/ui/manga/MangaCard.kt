@@ -54,7 +54,8 @@ fun MangaCard(
     isRead: Boolean,
     onCardClick: () -> Unit,
     onEditClick: () -> Unit,
-    onSyncClick: () -> Unit
+    onSyncClick: () -> Unit,
+    onReadClick: () -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -141,6 +142,22 @@ fun MangaCard(
                         leadingIcon = {
                             Icon(
                                 Icons.Default.Refresh,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(if (isRead) "Mark Unread" else "Mark Read") },
+                        onClick = {
+                            expanded.value = false
+                            onReadClick()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (isRead)
+                                    ImageVector.vectorResource(id = R.drawable.visibility_off)
+                                else
+                                    ImageVector.vectorResource(id = R.drawable.visibility),
                                 contentDescription = null
                             )
                         }

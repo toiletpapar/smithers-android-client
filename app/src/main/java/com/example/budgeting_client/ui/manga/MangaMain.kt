@@ -128,6 +128,11 @@ fun MangaMain(
                                 latestUpdate?.let { update ->
                                     mangaMainViewModel.updateReadStatus(update.mangaUpdateId, ReadStatus(true))
                                 }
+                            },
+                            onReadClick = {
+                                latestUpdate?.let { update ->
+                                    mangaMainViewModel.updateReadStatus(update.mangaUpdateId, ReadStatus(!update.isRead))
+                                }
                             }
                         )
                     }
