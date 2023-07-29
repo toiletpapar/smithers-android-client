@@ -6,6 +6,7 @@ import com.example.budgeting_client.models.AppResult
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.Manga
+import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.models.UpdateReadStatusPayload
 import com.example.budgeting_client.utils.AppErrors
@@ -235,6 +236,41 @@ class MangaRepository constructor(
     suspend fun updateReadStatus(mangaUpdateId: Int, readStatus: UpdateReadStatusPayload): AppResult<Unit, CrawlerErrors> {
         try {
             val response = remoteSource.updateReadStatus(mangaUpdateId, readStatus)
+
+            return when (response.code()) {
+                200 -> AppResult(
+                    isSuccessful = true,
+                    value = null,
+                    errors = null
+                )
+                else -> {
+                    Log.e(
+                        "BUDGETING_ERROR",
+                        "Unable to update read status. Server responded with ${response.code()}."
+                    )
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to updateReadStatus.")
+            Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+            return AppResult(
+                isSuccessful = false,
+                value = null,
+                errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+            )
+        }
+    }
+
+    suspend fun updateFavourite(mangaId: Int, isFavourite: UpdateCrawlerFavouritePayload): AppResult<Unit, CrawlerErrors> {
+        try {
+            val response = remoteSource.updateFavouriteCrawler(mangaId, isFavourite)
 
             return when (response.code()) {
                 200 -> AppResult(

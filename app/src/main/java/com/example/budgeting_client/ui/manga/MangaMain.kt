@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.FavouriteStatus
 import com.example.budgeting_client.models.ReadStatus
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +116,7 @@ fun MangaMain(
                             chapter = latestUpdate?.chapter,
                             lastUpdated = latestUpdate?.dateCreated,
                             isRead = latestUpdate?.isRead ?: false,
+                            isFavourite = manga.favourite,
                             latestCrawlSuccess = manga.crawlSuccess,
                             onEditClick = { onEditClick(manga.crawlTargetId) },
                             onSyncClick = { mangaMainViewModel.syncManga(manga.crawlTargetId) },
@@ -133,6 +135,9 @@ fun MangaMain(
                                 latestUpdate?.let { update ->
                                     mangaMainViewModel.updateReadStatus(update.mangaUpdateId, ReadStatus(!update.isRead))
                                 }
+                            },
+                            onFavouriteClick = {
+                                mangaMainViewModel.updateFavourite(manga.crawlTargetId, FavouriteStatus(!manga.favourite))
                             }
                         )
                     }

@@ -14,6 +14,7 @@ data class Manga(
     val adapter: CrawlerTypes,
     val lastCrawledOn: Date?,
     val crawlSuccess: Boolean?,
+    val favourite: Boolean,
     val updates: List<MangaUpdate>
 ): Parcelable {
     constructor(mangaApiModel: MangaApiModel): this(
@@ -23,6 +24,7 @@ data class Manga(
         adapter = mangaApiModel.crawler.adapter,
         lastCrawledOn = mangaApiModel.crawler.lastCrawledOn,
         crawlSuccess = mangaApiModel.crawler.crawlSuccess,
+        favourite = mangaApiModel.crawler.favourite,
         updates = mangaApiModel.mangaUpdates.map<MangaUpdateApiModel, MangaUpdate> {
             MangaUpdate(it)
         }

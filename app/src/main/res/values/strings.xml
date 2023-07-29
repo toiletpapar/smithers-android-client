@@ -13,4 +13,12 @@
     <string name="username_title">Username</string>
     <string name="password_title">Password</string>
     <string name="logout">Logout</string>
+    <string name="edit">Edit</string>
+    <string name="sync">Sync</string>
+    <string name="markRead">Mark Read</string>
+    <string name="markUnread">Mark Unread</string>
+    <string name="no_recorded_chapters">No chapters recorded</string>
+    <string name="chapter">Chapter</string>
+    <string name="favourite">Favourite</string>
+    <string name="unfavourite">Unfavourite</string>
 </resources>

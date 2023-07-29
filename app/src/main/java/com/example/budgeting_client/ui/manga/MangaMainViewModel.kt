@@ -12,7 +12,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.budgeting_client.SmithersApplication
 import com.example.budgeting_client.models.Manga
 import com.example.budgeting_client.models.CrawlerErrors
+import com.example.budgeting_client.models.FavouriteStatus
 import com.example.budgeting_client.models.ReadStatus
+import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateReadStatusPayload
 import com.example.budgeting_client.repositories.MangaRepository
 import com.example.budgeting_client.utils.AppErrors
@@ -102,6 +104,35 @@ class MangaMainViewModel constructor(
         viewModelScope.launch {
             try {
                 val response = mangaRepository.updateReadStatus(mangaUpdateId, UpdateReadStatusPayload(data = readStatus))
+
+                if (response.isSuccessful) {
+                    uiState = uiState.copy(
+                        hasUnknownError = false,
+                        errors = null,
+                    )
+                    getMangas()
+                } else {
+                    uiState = uiState.copy(
+                        errors = response.errors,
+                        hasUnknownError = response.errors?.hasOneOfError(listOf(CrawlerErrors.UNKNOWN_ERROR)) ?: false
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("BUDGETING_ERROR", e.message ?: "Unable to updateReadStatus.")
+                Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+                uiState = uiState.copy(
+                    errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR)),
+                    hasUnknownError = true
+                )
+            }
+        }
+    }
+
+    fun updateFavourite(mangaId: Int, favourite: FavouriteStatus) {
+        viewModelScope.launch {
+            try {
+                val response = mangaRepository.updateFavourite(mangaId, UpdateCrawlerFavouritePayload(data = favourite))
 
                 if (response.isSuccessful) {
                     uiState = uiState.copy(

@@ -1,8 +1,10 @@
 package com.example.budgeting_client.repositories
 
+import android.util.Log
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
+import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.models.UpdateReadStatusPayload
 import com.example.budgeting_client.utils.AppErrors
@@ -34,6 +36,7 @@ data class CrawlerApiModel(
     val adapter: CrawlerTypes,
     val lastCrawledOn: Date?,
     val crawlSuccess: Boolean?,
+    val favourite: Boolean
 )
 
 data class MangaUpdateApiModel(
@@ -98,6 +101,7 @@ class CrawlerApiModelDeserializer : JsonDeserializer<CrawlerApiModel> {
         val lastCrawledOn = lastCrawledOnString?.let { parseDate(it) }
 
         val crawlSuccess = jsonObject.getNullable("crawlSuccess")?.asBoolean
+        val favourite = jsonObject.getNullable("favourite")?.asBoolean ?: return null
 
         return CrawlerApiModel(
             crawlTargetId = crawlTargetId,
@@ -106,6 +110,7 @@ class CrawlerApiModelDeserializer : JsonDeserializer<CrawlerApiModel> {
             adapter = adapter,
             lastCrawledOn = lastCrawledOn,
             crawlSuccess = crawlSuccess,
+            favourite = favourite
         )
     }
 }
@@ -213,6 +218,52 @@ class UpdateCrawlerPayloadSerializer(private val gson: Gson) : JsonSerializer<Up
     }
 }
 
+class UpdateReadStatusPayloadSerializer : JsonSerializer<UpdateReadStatusPayload> {
+    override fun serialize(
+        payload: UpdateReadStatusPayload,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
+        val payloadJson = JsonObject()
+
+        val dataJson = JsonObject()
+        dataJson.addProperty("isRead", payload.data.isRead)
+
+        payloadJson.add("data", dataJson)
+
+        val propertiesJson = JsonArray()
+        payload.properties.forEach {
+            propertiesJson.add(it)
+        }
+        payloadJson.add("properties", propertiesJson)
+
+        return payloadJson
+    }
+}
+
+class UpdateCrawlerFavouritePayloadSerializer : JsonSerializer<UpdateCrawlerFavouritePayload> {
+    override fun serialize(
+        payload: UpdateCrawlerFavouritePayload,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement {
+        val payloadJson = JsonObject()
+
+        val dataJson = JsonObject()
+        dataJson.addProperty("favourite", payload.data.isFavourite)
+
+        payloadJson.add("data", dataJson)
+
+        val propertiesJson = JsonArray()
+        payload.properties.forEach {
+            propertiesJson.add(it)
+        }
+        payloadJson.add("properties", propertiesJson)
+
+        return payloadJson
+    }
+}
+
 // Defines how to access crawler data in the data source
 interface MangaNetworkDataSource {
     @GET("api/v1/manga")
@@ -226,6 +277,9 @@ interface MangaNetworkDataSource {
 
     @PATCH("api/v1/crawl-targets/{crawlTargetId}")
     suspend fun updateCrawler(@Path("crawlTargetId") crawlTargetId: Int, @Body updateCrawler: UpdateCrawlerPayload): Response<CrawlerApiModel>
+
+    @PATCH("api/v1/crawl-targets/{crawlTargetId}/favourite")
+    suspend fun updateFavouriteCrawler(@Path("crawlTargetId") crawlTargetId: Int, @Body updateCrawler: UpdateCrawlerFavouritePayload): Response<CrawlerApiModel>
 
     @PATCH("api/v1/manga/{crawlTargetId}")
     suspend fun syncManga(@Path("crawlTargetId") crawlTargetId: Int): Response<Unit>

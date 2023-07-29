@@ -14,8 +14,11 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,10 +56,12 @@ fun MangaCard(
     lastUpdated: Date?,  // The date this chapter was catalogued
     latestCrawlSuccess: Boolean?, // The latest date the crawler successfully retrieved data from remote
     isRead: Boolean,
+    isFavourite: Boolean,
     onCardClick: () -> Unit,
     onEditClick: () -> Unit,
     onSyncClick: () -> Unit,
-    onReadClick: () -> Unit
+    onReadClick: () -> Unit,
+    onFavouriteClick: () -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -64,7 +70,9 @@ fun MangaCard(
         modifier = modifier
     ) {
         Row(
-            modifier = Modifier.fillMaxSize().padding(8.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
         ) {
             Column(Modifier.fillMaxWidth(0.2f)) {
                 Surface(Modifier.fillMaxSize()) {
@@ -85,7 +93,10 @@ fun MangaCard(
                     }
                 }
             }
-            Column(Modifier.fillMaxWidth(0.8f).padding(horizontal = 16.dp)) {
+            Column(
+                Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(horizontal = 16.dp)) {
                 Text(
                     text = title,
                     modifier = Modifier.fillMaxWidth(),
@@ -96,12 +107,12 @@ fun MangaCard(
 
                 if (chapter != null) {
                     Text(
-                        text = "Chapter $chapter",
+                        text = stringResource(id = R.string.chapter) + " $chapter",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 } else {
                     Text(
-                        text = "No chapters recorded",
+                        text = stringResource(id = R.string.no_recorded_chapters),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -115,7 +126,26 @@ fun MangaCard(
                     )
                 }
             }
-            Column(modifier = Modifier.fillMaxWidth().wrapContentSize(Alignment.TopEnd)) {
+            Column(modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .wrapContentSize(Alignment.TopEnd)
+            ) {
+                IconButton(onClick = onFavouriteClick) {
+                    Icon(
+                        imageVector = if (isFavourite)
+                            Icons.Default.Favorite
+                        else
+                            ImageVector.vectorResource(id = R.drawable.empty_favourite),
+                        contentDescription = if (isFavourite)
+                            stringResource(id = R.string.unfavourite)
+                        else
+                            stringResource(id = R.string.favourite)
+                    )
+                }
+            }
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.TopEnd)) {
                 IconButton(onClick = { expanded.value = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "More menu")
                 }
@@ -124,7 +154,7 @@ fun MangaCard(
                     onDismissRequest = { expanded.value = false }
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Edit") },
+                        text = { Text(stringResource(id = R.string.edit)) },
                         onClick = { onEditClick() },
                         leadingIcon = {
                             Icon(
@@ -134,7 +164,7 @@ fun MangaCard(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Sync") },
+                        text = { Text(stringResource(id = R.string.sync)) },
                         onClick = {
                             expanded.value = false
                             onSyncClick()
@@ -147,7 +177,11 @@ fun MangaCard(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text(if (isRead) "Mark Unread" else "Mark Read") },
+                        text = { Text(if (isRead)
+                            stringResource(id = R.string.markUnread)
+                        else
+                            stringResource(id = R.string.markRead)
+                        )},
                         onClick = {
                             expanded.value = false
                             onReadClick()
@@ -162,6 +196,26 @@ fun MangaCard(
                             )
                         }
                     )
+//                    DropdownMenuItem(
+//                        text = { Text(if (isFavourite)
+//                            stringResource(id = R.string.unfavourite)
+//                        else
+//                            stringResource(id = R.string.favourite)
+//                        )},
+//                        onClick = {
+//                            expanded.value = false
+//                            onFavouriteClick()
+//                        },
+//                        leadingIcon = {
+//                            Icon(
+//                                imageVector = if (isFavourite)
+//                                    Icons.Outlined.Favorite
+//                                else
+//                                    Icons.Default.Favorite,
+//                                contentDescription = null
+//                            )
+//                        }
+//                    )
                 }
             }
         }
