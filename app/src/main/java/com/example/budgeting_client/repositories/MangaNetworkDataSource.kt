@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
 import com.example.budgeting_client.models.CreateCrawlerPayload
+import com.example.budgeting_client.models.QueryCrawlerErrors
 import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.models.UpdateReadStatusPayload
@@ -54,7 +55,7 @@ data class MangaApiModel(
     val mangaUpdates: List<MangaUpdateApiModel>
 )
 
-class MangaApiModelSerializer(private val gson: Gson) : JsonDeserializer<MangaApiModel> {
+class MangaApiModelDeserializer(private val gson: Gson) : JsonDeserializer<MangaApiModel> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
@@ -182,7 +183,30 @@ class MangaApiErrorModelDeserializer : JsonDeserializer<AppErrors<CrawlerErrors>
     }
 }
 
-class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload> {
+class MangaSearchApiErrorModelDeserializer : JsonDeserializer<AppErrors<QueryCrawlerErrors>> {
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): AppErrors<QueryCrawlerErrors>? {
+        val jsonObject = json?.asJsonObject ?: return null
+
+        val appErrors =  AppErrors(jsonObject.getAsJsonArray("errors").map {
+            val error = it.asJsonObject
+            when (error.getNullable("type")?.asString) {
+                "required" -> when (error.getNullable("path")?.asString) {
+                    "query" -> QueryCrawlerErrors.EMPTY_QUERY
+                    else -> QueryCrawlerErrors.UNKNOWN_ERROR
+                }
+                else -> QueryCrawlerErrors.UNKNOWN_ERROR
+            }
+        })
+
+        return appErrors
+    }
+}
+
+class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload>, JsonDeserializer<CreateCrawlerPayload> {
     override fun serialize(
         crawler: CreateCrawlerPayload,
         typeOfSrc: Type,
@@ -195,6 +219,25 @@ class CreateCrawlerPayloadSerializer : JsonSerializer<CreateCrawlerPayload> {
         crawlerJson.addProperty("adapter", crawler.adapter.value)
 
         return crawlerJson
+    }
+
+    override fun deserialize(
+        json: JsonElement?,
+        typeOfT: Type?,
+        context: JsonDeserializationContext?
+    ): CreateCrawlerPayload? {
+        val jsonObject = json?.asJsonObject ?: return null
+
+        val name = jsonObject.getNullable("name")?.asString ?: return null
+        val url = jsonObject.getNullable("url")?.asString ?: return null
+        val adapterString = jsonObject.getNullable("adapter")?.asString ?: return null
+        val adapter = CrawlerTypes.values().find { it.value == adapterString } ?: return null
+
+        return CreateCrawlerPayload(
+            name = name,
+            url = url,
+            adapter = adapter
+        )
     }
 }
 
@@ -268,6 +311,9 @@ class UpdateCrawlerFavouritePayloadSerializer : JsonSerializer<UpdateCrawlerFavo
 interface MangaNetworkDataSource {
     @GET("api/v1/manga")
     suspend fun getManga(@Query("onlyLatest") onlyLatest: Boolean? = true): Response<List<MangaApiModel>>
+
+    @GET("api/v1/crawl-targets/search")
+    suspend fun searchCrawlers(@Query("query") query: String, @Query("source") source: CrawlerTypes, @Query("page") page: Short): Response<List<CreateCrawlerPayload>>
 
     @GET("api/v1/crawl-targets/{crawlTargetId}")
     suspend fun getCrawler(@Path("crawlTargetId") crawlTargetId: Int): Response<CrawlerApiModel>

@@ -2,6 +2,7 @@ package com.example.budgeting_client.utils
 
 import com.example.budgeting_client.models.AppAuthUserErrors
 import com.example.budgeting_client.models.AppCrawlerErrors
+import com.example.budgeting_client.models.AppQueryCrawlerErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
@@ -12,7 +13,8 @@ import com.example.budgeting_client.repositories.CrawlerApiModelDeserializer
 import com.example.budgeting_client.repositories.CreateCrawlerPayloadSerializer
 import com.example.budgeting_client.repositories.MangaApiErrorModelDeserializer
 import com.example.budgeting_client.repositories.MangaApiModel
-import com.example.budgeting_client.repositories.MangaApiModelSerializer
+import com.example.budgeting_client.repositories.MangaApiModelDeserializer
+import com.example.budgeting_client.repositories.MangaSearchApiErrorModelDeserializer
 import com.example.budgeting_client.repositories.MangaUpdateApiModel
 import com.example.budgeting_client.repositories.MangaUpdateApiModelDeserializer
 import com.example.budgeting_client.repositories.UpdateCrawlerFavouritePayloadSerializer
@@ -46,9 +48,10 @@ fun initializeGson(): Gson {
     val parentGson = parentGsonBuilder.create()
 
     return parentGsonBuilder
-        .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelSerializer(parentGson))
+        .registerTypeAdapter(MangaApiModel::class.java, MangaApiModelDeserializer(parentGson))
         .registerTypeAdapter(MangaUpdateApiModel::class.java, MangaUpdateApiModelDeserializer())
         .registerTypeAdapter(AppCrawlerErrors, MangaApiErrorModelDeserializer())
+        .registerTypeAdapter(AppQueryCrawlerErrors, MangaSearchApiErrorModelDeserializer())
         .registerTypeAdapter(AppAuthUserErrors, AuthUserApiErrorModelDeserializer())
         .registerTypeAdapter(CrawlerApiModel::class.java, CrawlerApiModelDeserializer())
         .registerTypeAdapter(UserApiModel::class.java, UserApiModelDeserializer())

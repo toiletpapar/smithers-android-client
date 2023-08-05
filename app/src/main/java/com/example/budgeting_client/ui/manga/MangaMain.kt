@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgeting_client.LocalSnackbarHostState
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.FavouriteStatus
 import com.example.budgeting_client.models.ReadStatus
@@ -37,10 +39,11 @@ import com.example.budgeting_client.models.ReadStatus
 fun MangaMain(
     onDrawerOpen: () -> Unit,
     onAddClick: () -> Unit,
+    onSearchClick: () -> Unit,
     onEditClick: (crawlTargetId: Int) -> Unit,
     mangaMainViewModel: MangaMainViewModel = viewModel(factory = MangaMainViewModel.Factory),
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = LocalSnackbarHostState.current
     val mangas = mangaMainViewModel.uiState.mangas
 
     LaunchedEffect(mangas) {
@@ -85,6 +88,12 @@ fun MangaMain(
                     }
                 },
                 actions = {
+                    IconButton(onClick = onSearchClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search Manga"
+                        )
+                    }
                     IconButton(onClick = onAddClick) {
                         Icon(
                             imageVector = Icons.Filled.Add,

@@ -2,10 +2,13 @@ package com.example.budgeting_client.repositories
 
 import android.util.Log
 import com.example.budgeting_client.models.AppCrawlerErrors
+import com.example.budgeting_client.models.AppQueryCrawlerErrors
 import com.example.budgeting_client.models.AppResult
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CreateCrawlerPayload
 import com.example.budgeting_client.models.Manga
+import com.example.budgeting_client.models.QueryCrawlerErrors
+import com.example.budgeting_client.models.SearchCrawlerPayload
 import com.example.budgeting_client.models.UpdateCrawlerFavouritePayload
 import com.example.budgeting_client.models.UpdateCrawlerPayload
 import com.example.budgeting_client.models.UpdateReadStatusPayload
@@ -57,6 +60,66 @@ class MangaRepository constructor(
                 isSuccessful = false,
                 value = null,
                 errors = AppErrors(listOf(CrawlerErrors.UNKNOWN_ERROR))
+            )
+        }
+    }
+
+    suspend fun searchMangas(searchOptions: SearchCrawlerPayload): AppResult<List<CreateCrawlerPayload>, QueryCrawlerErrors> {
+        try {
+            val response = remoteSource.searchCrawlers(
+                query = searchOptions.query,
+                source = searchOptions.source,
+                page = searchOptions.page
+            )
+
+            return when (response.code()) {
+                200 -> {
+                    val body = response.body()
+
+                    if (body == null) {
+                        AppResult(
+                            isSuccessful = false,
+                            value = null,
+                            errors = AppErrors(listOf(QueryCrawlerErrors.UNKNOWN_ERROR))
+                        )
+                    } else {
+                        AppResult(
+                            isSuccessful = true,
+                            value = body,
+                            errors = null
+                        )
+                    }
+                }
+                400 -> {
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = response.errorBody()?.let {
+                            gson.fromJson(
+                                it.string(),
+                                AppQueryCrawlerErrors
+                            )
+                        } ?: AppErrors(listOf(QueryCrawlerErrors.UNKNOWN_ERROR))
+                    )
+                }
+                else -> {
+                    Log.e("BUDGETING_ERROR", "Unable to getCrawlers. Server responded with ${response.code()}.")
+
+                    AppResult(
+                        isSuccessful = false,
+                        value = null,
+                        errors = AppErrors(listOf(QueryCrawlerErrors.UNKNOWN_ERROR))
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("BUDGETING_ERROR", e.message ?: "Unable to getCrawlers.")
+            Log.e("BUDGETING_ERROR", e.stackTraceToString())
+
+            return AppResult(
+                isSuccessful = false,
+                value = null,
+                errors = AppErrors(listOf(QueryCrawlerErrors.UNKNOWN_ERROR))
             )
         }
     }

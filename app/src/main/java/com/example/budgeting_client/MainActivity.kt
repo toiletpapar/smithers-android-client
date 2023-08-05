@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -23,18 +25,17 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 // TODO: Add ability to import all crawlers through bookmark bar (adding one at a time is a pain)
-// TODO: Pull the most "popular" mangadex and webtoon comics, allow users to select from those instead of creating the crawlers manually
-// TODO: Add "Favourites" which are always filtered to the top
-// TODO: Add "Mark as Read" for Cards
 // TODO: Memoization for efficient recompose
 // Declare data store
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
+val LocalSnackbarHostState = compositionLocalOf {
+    SnackbarHostState()
+}
 // Application dependencies
 class SmithersApplication : Application() {
     private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
 //    private val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
-//    private val url = "https://tylerpoon.ca".toHttpUrlOrNull()!!          // Production
+//    private val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
     private val gson = initializeGson()
 
     var mangaRepository: MangaRepository? = null

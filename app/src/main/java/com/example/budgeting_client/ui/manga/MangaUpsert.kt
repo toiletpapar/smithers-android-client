@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DropdownMenuItem
@@ -32,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgeting_client.LocalSnackbarHostState
 import com.example.budgeting_client.R
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.CrawlerTypes
@@ -43,20 +45,26 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MangaUpsert(
-    onClose: () -> Unit,
+    onBack: () -> Unit,
     onSaveComplete: () -> Unit,
-    crawlTargetId: Int?,
+    crawlTargetId: Int? = null, // Mutually exclusive with initialCrawler
+    initialCrawler: CreateCrawlerPayload? = null,
     mangaUpsertViewModel: MangaUpsertViewModel = viewModel(factory = MangaUpsertViewModel.Factory)
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = LocalSnackbarHostState.current
     val scope = rememberCoroutineScope()
 
     val errors = mangaUpsertViewModel.uiState.errors
     val isSaving = mangaUpsertViewModel.uiState.isSaving
 
+    // Populate the viewModel
     LaunchedEffect(Unit) {
         if (crawlTargetId != null && crawlTargetId != -1) {
             mangaUpsertViewModel.getCrawler(crawlTargetId)
+        } else if (initialCrawler != null && (crawlTargetId == -1 || crawlTargetId == null)) {
+            mangaUpsertViewModel.setCrawlerName(initialCrawler.name)
+            mangaUpsertViewModel.setCrawlerAdapter(initialCrawler.adapter)
+            mangaUpsertViewModel.setCrawlerUrl(initialCrawler.url)
         }
     }
 
@@ -85,9 +93,9 @@ fun MangaUpsert(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onClose) {
+                        IconButton(onClick = onBack) {
                             Icon(
-                                imageVector = Icons.Filled.Close,
+                                imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = null
                             )
                         }
@@ -142,38 +150,17 @@ fun MangaUpsert(
 
                 var expanded by remember { mutableStateOf(false) }
 
-                ExposedDropdownMenuBox(
+                CrawlerTypesDropdown(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded },
-                ) {
-                    TextField(
-                        // The `menuAnchor` modifier must be passed to the text field for correctness.
-                        modifier = Modifier
-                            .menuAnchor()
-                            .then(modifier),
-                        readOnly = true,
-                        value = mangaUpsertViewModel.uiState.crawler.adapter.displayName,
-                        onValueChange = {},
-                        label = { Text(stringResource(R.string.manga_adapter_form)) },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        CrawlerTypes.values().forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.displayName) },
-                                onClick = {
-                                    mangaUpsertViewModel.setCrawlerAdapter(option)
-                                    expanded = false
-                                },
-                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                            )
-                        }
+                    modifier = modifier,
+                    currentAdapter = mangaUpsertViewModel.uiState.crawler.adapter,
+                    onDismissRequest = { expanded = false },
+                    onCrawlerTypeClick = {
+                        mangaUpsertViewModel.setCrawlerAdapter(it)
+                        expanded = false
                     }
-                }
+                )
             }
         }
     } else {

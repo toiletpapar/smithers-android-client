@@ -1,10 +1,12 @@
 package com.example.budgeting_client.models
 
+import android.R.id
 import android.os.Parcelable
 import com.example.budgeting_client.utils.AppErrors
 import com.google.gson.reflect.TypeToken
 import kotlinx.parcelize.Parcelize
 import java.lang.reflect.Type
+
 
 @Parcelize
 data class CreateCrawlerPayload(
@@ -33,5 +35,9 @@ val AppCrawlerErrors: Type? = TypeToken.getParameterized(AppErrors::class.java, 
 
 enum class CrawlerTypes(val displayName: String, val value: String) {
     WEBTOON("Webtoon", "webtoon"),
-    MANGADEX("Mangadex", "mangadex")
+    MANGADEX("Mangadex", "mangadex");
+
+    override fun toString(): String {
+        return value
+    }
 }
