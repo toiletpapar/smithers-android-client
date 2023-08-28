@@ -1,8 +1,6 @@
 package com.example.budgeting_client.ui.manga
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +15,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -34,24 +30,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.budgeting_client.R
+import com.example.budgeting_client.SmithersApplication
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
 @SuppressLint("SimpleDateFormat")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun MangaCard(
     modifier: Modifier = Modifier,
     title: String, // The name of the crawler
+    imageUrl: String,
     chapter: Float?,
     chapterName: String?,
     lastUpdated: Date?,  // The date this chapter was catalogued
@@ -78,11 +76,14 @@ fun MangaCard(
             Column(Modifier.fillMaxWidth(0.2f)) {
                 Surface(Modifier.fillMaxSize()) {
                     // TODO: Add param for image based on LatestMangaUpdate otherwise use the Crawler.adapter
-                    Image(
+                    GlideImage(
                         modifier = Modifier.fillMaxSize(),
-                        painter = painterResource(id = R.drawable.webtoon),
+                        model = imageUrl,
                         contentDescription = "Manga Cover",
-                    )
+                    ) {
+                        // TODO: Use app avatar for image placeholder
+                        it.placeholder(R.drawable.webtoon)
+                    }
                     Row {
                         if (isRead) {
                             Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))

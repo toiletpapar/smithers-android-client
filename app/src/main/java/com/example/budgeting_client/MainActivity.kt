@@ -33,13 +33,14 @@ val LocalSnackbarHostState = compositionLocalOf {
 }
 // Application dependencies
 class SmithersApplication : Application() {
-    private val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
-//    private val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
-//    private val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
     private val gson = initializeGson()
 
+//    val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
+//    val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
+//    val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
     var mangaRepository: MangaRepository? = null
     var userRepository: UserRepository? = null
+    var client: OkHttpClient? = null
     override fun onCreate() {
         super.onCreate()
 
@@ -54,9 +55,14 @@ class SmithersApplication : Application() {
         // Initialize data layer
         this.mangaRepository = MangaRepository(crawlerService, gson)
         this.userRepository = UserRepository(userService, gson)
-    }
+        this.client = client
 
-    // TODO: companion object?
+    }
+    companion object {
+        val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
+//    val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
+//    val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
+    }
 }
 
 class MainActivity : ComponentActivity() {
@@ -73,10 +79,6 @@ class MainActivity : ComponentActivity() {
 
 /**
  * TODO
- * Connect to the server for application functionality:
- * * User-initiated Sync
- * * Edit
- * * Delete
  * Using WorkManager deferrables for automated syncing from crawler server
  * Notifications
  *

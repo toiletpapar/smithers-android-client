@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgeting_client.LocalSnackbarHostState
+import com.example.budgeting_client.SmithersApplication
 import com.example.budgeting_client.models.CrawlerErrors
 import com.example.budgeting_client.models.FavouriteStatus
 import com.example.budgeting_client.models.ReadStatus
@@ -122,6 +123,7 @@ fun MangaMain(
                                 .fillMaxWidth(0.9F)
                                 .align(Alignment.Center),
                             title = manga.name,
+                            imageUrl = SmithersApplication.url.toString() + "api/v1/crawl-targets/${manga.crawlTargetId}/cover",
                             chapter = latestUpdate?.chapter,
                             chapterName = latestUpdate?.chapterName,
                             lastUpdated = latestUpdate?.dateCreated,
