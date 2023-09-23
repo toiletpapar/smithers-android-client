@@ -37,7 +37,8 @@ data class CrawlerApiModel(
     val adapter: CrawlerTypes,
     val lastCrawledOn: Date?,
     val crawlSuccess: Boolean?,
-    val favourite: Boolean
+    val favourite: Boolean,
+    val coverSignature: String?
 )
 
 data class MangaUpdateApiModel(
@@ -103,6 +104,7 @@ class CrawlerApiModelDeserializer : JsonDeserializer<CrawlerApiModel> {
 
         val crawlSuccess = jsonObject.getNullable("crawlSuccess")?.asBoolean
         val favourite = jsonObject.getNullable("favourite")?.asBoolean ?: return null
+        val coverSignature = jsonObject.getNullable("coverSignature")?.asString
 
         return CrawlerApiModel(
             crawlTargetId = crawlTargetId,
@@ -111,7 +113,8 @@ class CrawlerApiModelDeserializer : JsonDeserializer<CrawlerApiModel> {
             adapter = adapter,
             lastCrawledOn = lastCrawledOn,
             crawlSuccess = crawlSuccess,
-            favourite = favourite
+            favourite = favourite,
+            coverSignature = coverSignature
         )
     }
 }

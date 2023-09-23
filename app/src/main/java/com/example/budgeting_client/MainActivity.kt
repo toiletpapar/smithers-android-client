@@ -35,9 +35,6 @@ val LocalSnackbarHostState = compositionLocalOf {
 class SmithersApplication : Application() {
     private val gson = initializeGson()
 
-//    val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
-//    val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
-//    val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
     var mangaRepository: MangaRepository? = null
     var userRepository: UserRepository? = null
     var client: OkHttpClient? = null
@@ -60,8 +57,8 @@ class SmithersApplication : Application() {
     }
     companion object {
         val url = "http://10.0.2.2:8080/".toHttpUrlOrNull()!!       // Local
-//    val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
-//    val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
+//        val url = "http://192.168.0.24:8080/".toHttpUrlOrNull()!!   // LAN
+//        val url = "https://tylerpoon.ca/".toHttpUrlOrNull()!!          // Production
     }
 }
 

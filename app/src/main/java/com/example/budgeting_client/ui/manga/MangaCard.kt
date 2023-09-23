@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.example.budgeting_client.R
 import com.example.budgeting_client.SmithersApplication
 import java.text.SimpleDateFormat
@@ -50,6 +51,7 @@ fun MangaCard(
     modifier: Modifier = Modifier,
     title: String, // The name of the crawler
     imageUrl: String,
+    imageSignature: String?,
     chapter: Float?,
     chapterName: String?,
     lastUpdated: Date?,  // The date this chapter was catalogued
@@ -75,12 +77,17 @@ fun MangaCard(
         ) {
             Column(Modifier.fillMaxWidth(0.2f)) {
                 Surface(Modifier.fillMaxSize()) {
-                    // TODO: Add param for image based on LatestMangaUpdate otherwise use the Crawler.adapter
+                    // TODO: Check why image is not re-rendered when uiState is changed
+                    // TODO: Handle the case where the request for the image fails
                     GlideImage(
                         modifier = Modifier.fillMaxSize(),
                         model = imageUrl,
                         contentDescription = "Manga Cover",
                     ) {
+                        if (imageSignature != null) {
+                            it.signature(ObjectKey(imageSignature))
+                        }
+
                         // TODO: Use app avatar for image placeholder
                         it.placeholder(R.drawable.webtoon)
                     }

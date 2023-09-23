@@ -115,7 +115,7 @@ fun MangaSearch(
                         value = mangaSearchViewModel.uiState.searchPayload.query,
                         onValueChange = { mangaSearchViewModel.setSearchQuery(it) },
                         singleLine = true,
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Search
                         ),
@@ -128,7 +128,7 @@ fun MangaSearch(
                                 }
                             }
                         ),
-                        textStyle = TextStyle(fontSize = 20.sp),
+                        textStyle = TextStyle(fontSize = 20.sp, color = Color.Unspecified),
                         decorationBox = { innerTextField ->
                             Box(
                                 modifier = Modifier

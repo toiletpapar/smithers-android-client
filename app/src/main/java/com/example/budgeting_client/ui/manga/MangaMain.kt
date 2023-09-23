@@ -124,6 +124,7 @@ fun MangaMain(
                                 .align(Alignment.Center),
                             title = manga.name,
                             imageUrl = SmithersApplication.url.toString() + "api/v1/crawl-targets/${manga.crawlTargetId}/cover",
+                            imageSignature = manga.coverSignature,
                             chapter = latestUpdate?.chapter,
                             chapterName = latestUpdate?.chapterName,
                             lastUpdated = latestUpdate?.dateCreated,
