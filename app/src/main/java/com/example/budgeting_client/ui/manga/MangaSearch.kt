@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -128,15 +129,15 @@ fun MangaSearch(
                                 }
                             }
                         ),
-                        textStyle = TextStyle(fontSize = 20.sp, color = Color.Unspecified),
+                        // TODO: Figure out how to use the color from the android background theme
+                        textStyle = TextStyle(fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface),
                         decorationBox = { innerTextField ->
                             Box(
                                 modifier = Modifier
                             ) {
                                 if (mangaSearchViewModel.uiState.searchPayload.query.isEmpty()) {
                                     Text(
-                                        text = "Search",
-                                        color = Color.Unspecified
+                                        text = "Search"
                                     )
                                 }
                                 innerTextField()
